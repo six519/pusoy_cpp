@@ -36,7 +36,7 @@ void Game::run() {
         // draw sprites and stuff here
         switch(state) {
             default:
-                main_room->play(window, sprites, textures, music_objects);
+                main_room->play(window, sprites, textures, music_objects, musics);
         }
         window->display();
     }

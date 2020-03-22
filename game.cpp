@@ -17,6 +17,7 @@ void Game::init() {
 
     init_musics();
     main_room = new MainRoom();
+    play_room = new PlayRoom();
 }
 
 void Game::run() {
@@ -35,8 +36,11 @@ void Game::run() {
         window->clear();
         // draw sprites and stuff here
         switch(state) {
+            case GAME_STATE_PLAY:
+                state = play_room->play(window, sprites, textures, music_objects, musics);
+            break;
             default:
-                main_room->play(window, sprites, textures, music_objects, musics);
+                state = main_room->play(window, sprites, textures, music_objects, musics);
         }
         window->display();
     }

@@ -13,7 +13,9 @@ sf::Sprite refreshTexture(int index, vector<sf::Sprite> sprites, vector<sf::Text
     return sprites[index];
 }
 
-void Room::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics) {
+int Room::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics) {
+
+    return GAME_STATE_MAIN;
 }
 
 void Room::stop_all_musics(vector<string> musics, sf::Music* music_objects, vector<int> ignore_stop) {
@@ -24,7 +26,18 @@ void Room::stop_all_musics(vector<string> musics, sf::Music* music_objects, vect
     }
 }
 
-void MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics) {
+bool Room::isSpriteClicked(sf::Sprite *sprite, sf::RenderWindow *window) {
+    auto mouse_pos = sf::Mouse::getPosition(*window);
+    auto translated_pos = window->mapPixelToCoords(mouse_pos);
+
+    if(sprite->getGlobalBounds().contains(translated_pos) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        return true;
+    }
+
+    return false;
+}
+
+int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics) {
     //stop all sounds
     //this is a mandatory call for any room play
     vector<int> ignore = {0};
@@ -41,4 +54,17 @@ void MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector
     sprites[1].setPosition(sf::Vector2f((GAME_WIDTH - sprites[1].getLocalBounds().width) / 2, (GAME_HEIGHT - sprites[1].getLocalBounds().height) / 2));
 
     window->draw(refreshTexture(1, sprites, textures));
+
+    if(isSpriteClicked(&sprites[1], window)) {
+        return GAME_STATE_PLAY;
+    }
+
+    return GAME_STATE_MAIN;
+}
+
+int PlayRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics) {
+    vector<int> ignore = {};
+    stop_all_musics(musics, music_objects, ignore);
+
+    return GAME_STATE_PLAY;
 }

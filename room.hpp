@@ -10,13 +10,19 @@ sf::Sprite refreshTexture(int index, vector<sf::Sprite> sprites, vector<sf::Text
 
 class Room {
     public:
-        void play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics);
+        int play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics);
         void stop_all_musics(vector<string> musics, sf::Music* music_objects, vector<int> ignore_stop);
+        bool isSpriteClicked(sf::Sprite *sprite, sf::RenderWindow *window);
 };
 
 class MainRoom: public Room {
     public:
-        void play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics);
+        int play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics);
+};
+
+class PlayRoom: public Room {
+    public:
+        int play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics);
 };
 
 #endif

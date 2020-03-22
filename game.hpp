@@ -12,6 +12,7 @@ const int GAME_WIDTH = 1024;
 const int GAME_HEIGHT = 600;
 const string GAME_TITLE = "Pusoy Dos";
 const int GAME_STATE_MAIN = 0;
+const int GAME_STATE_PLAY = 1;
 
 class Game {
     public:
@@ -23,6 +24,7 @@ class Game {
         sf::Music* music_objects;
         
         MainRoom* main_room;
+        PlayRoom* play_room;
 
         int state;
         void run();

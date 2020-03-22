@@ -52,8 +52,6 @@ bool Room::isSpriteClicked(sf::Sprite *sprite, sf::RenderWindow *window) {
 }
 
 int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
-    //stop all sounds
-    //this is a mandatory call for any room play
     vector<int> ignore = {0};
     stop_all_musics(musics, music_objects, ignore);
 
@@ -62,6 +60,7 @@ int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<
     if (music_objects[0].getStatus() != sf::Music::Status::Playing)
         music_objects[0].play();
 
+    //main background
     window->draw(refreshTexture(0, sprites, textures));
 
     //center title
@@ -78,8 +77,8 @@ int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<
 }
 
 int PlayRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
-    vector<int> ignore = {};
-    stop_all_musics(musics, music_objects, ignore);
+    //main background
+    window->draw(refreshTexture(0, sprites, textures));
 
     return GAME_STATE_PLAY;
 }

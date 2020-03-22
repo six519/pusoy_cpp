@@ -8,12 +8,26 @@
 
 using namespace std;
 
+void GameSound::init(std::string src) {
+    _src = src;
+    if(!buffer.loadFromFile(src)) {
+        throw FileGameException();
+    }
+    sound.setBuffer(buffer);
+}
+void GameSound::play(){
+    sound.play();
+}
+void GameSound::stop(){
+    sound.stop();
+}
+
 sf::Sprite refreshTexture(int index, vector<sf::Sprite> sprites, vector<sf::Texture> textures) {
     sprites[index].setTexture(textures[index]);
     return sprites[index];
 }
 
-int Room::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics) {
+int Room::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
 
     return GAME_STATE_MAIN;
 }
@@ -37,7 +51,7 @@ bool Room::isSpriteClicked(sf::Sprite *sprite, sf::RenderWindow *window) {
     return false;
 }
 
-int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics) {
+int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
     //stop all sounds
     //this is a mandatory call for any room play
     vector<int> ignore = {0};
@@ -56,13 +70,14 @@ int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<
     window->draw(refreshTexture(1, sprites, textures));
 
     if(isSpriteClicked(&sprites[1], window)) {
+        sounds[0]->play();
         return GAME_STATE_PLAY;
     }
 
     return GAME_STATE_MAIN;
 }
 
-int PlayRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics) {
+int PlayRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
     vector<int> ignore = {};
     stop_all_musics(musics, music_objects, ignore);
 

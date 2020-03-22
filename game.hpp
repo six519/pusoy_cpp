@@ -22,6 +22,7 @@ class Game {
         vector<sf::Texture> textures;
         vector<string> musics;
         sf::Music* music_objects;
+        vector<GameSound*> sounds;
         
         MainRoom* main_room;
         PlayRoom* play_room;
@@ -31,6 +32,9 @@ class Game {
         void init_musics();
         int add_sprite(string filename, bool is_tiled = false);
         int add_music(string filename);
+
+        void add_sounds(string src);
+
     private:
         void init();
 };

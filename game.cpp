@@ -15,6 +15,8 @@ void Game::init() {
 
     add_music("sounds/bg_sound.ogg");
 
+    add_sounds("sounds/push2.ogg");
+
     init_musics();
     main_room = new MainRoom();
     play_room = new PlayRoom();
@@ -37,10 +39,10 @@ void Game::run() {
         // draw sprites and stuff here
         switch(state) {
             case GAME_STATE_PLAY:
-                state = play_room->play(window, sprites, textures, music_objects, musics);
+                state = play_room->play(window, sprites, textures, music_objects, musics, sounds);
             break;
             default:
-                state = main_room->play(window, sprites, textures, music_objects, musics);
+                state = main_room->play(window, sprites, textures, music_objects, musics, sounds);
         }
         window->display();
     }
@@ -77,4 +79,9 @@ void Game::init_musics() {
             throw FileGameException();
         }
     }
+}
+
+void Game::add_sounds(string src) {
+    sounds.push_back(new GameSound());
+    sounds.back()->init(src);
 }

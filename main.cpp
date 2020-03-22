@@ -11,7 +11,7 @@ int main() {
         game.run();
     } catch(FileGameException exception) {
         cout << exception.message();
-        return -1;
+        return EXIT_FAILURE;
     }
-    return 0;
+    return EXIT_SUCCESS;
 }

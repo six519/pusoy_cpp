@@ -18,7 +18,7 @@ class Game {
     public:
         sf::RenderWindow* window;
         sf::Event* event;
-        vector<sf::Sprite> sprites;
+        vector<GameSprite*> sprites;
         vector<sf::Texture> textures;
         vector<string> musics;
         sf::Music* music_objects;

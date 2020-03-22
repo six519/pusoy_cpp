@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void GameSound::init(std::string src) {
+void GameSound::init(string src) {
     _src = src;
     if(!buffer.loadFromFile(src)) {
         throw FileGameException();
@@ -22,12 +22,27 @@ void GameSound::stop(){
     sound.stop();
 }
 
-sf::Sprite refreshTexture(int index, vector<sf::Sprite> sprites, vector<sf::Texture> textures) {
-    sprites[index].setTexture(textures[index]);
-    return sprites[index];
+void GameSprite::init(string src, bool is_tiled) {
+    _src = src;
+    if(!texture.loadFromFile(src)) {
+        throw FileGameException();
+    }        
+    sprite.setTexture(texture);
+    if (is_tiled) {
+        texture.setRepeated(true);
+        sprite.setTextureRect(sf::IntRect(0, 0, GAME_WIDTH, GAME_HEIGHT));
+    }
 }
 
-int Room::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
+sf::Sprite GameSprite::get_sprite() {
+    return sprite;
+}
+
+void GameSprite::set_position(sf::Vector2f position) {
+    sprite.setPosition(position);
+}
+
+int Room::play(sf::RenderWindow* window, vector<GameSprite*> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
 
     return GAME_STATE_MAIN;
 }
@@ -40,18 +55,18 @@ void Room::stop_all_musics(vector<string> musics, sf::Music* music_objects, vect
     }
 }
 
-bool Room::isSpriteClicked(sf::Sprite *sprite, sf::RenderWindow *window) {
+bool Room::is_sprite_clicked(sf::Sprite sprite, sf::RenderWindow *window) {
     auto mouse_pos = sf::Mouse::getPosition(*window);
     auto translated_pos = window->mapPixelToCoords(mouse_pos);
 
-    if(sprite->getGlobalBounds().contains(translated_pos) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+    if(sprite.getGlobalBounds().contains(translated_pos) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         return true;
     }
 
     return false;
 }
 
-int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
+int MainRoom::play(sf::RenderWindow* window, vector<GameSprite*> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
     vector<int> ignore = {0};
     stop_all_musics(musics, music_objects, ignore);
 
@@ -61,14 +76,14 @@ int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<
         music_objects[0].play();
 
     //main background
-    window->draw(refreshTexture(0, sprites, textures));
+    window->draw(sprites[0]->get_sprite());
 
     //center title
-    sprites[1].setPosition(sf::Vector2f((GAME_WIDTH - sprites[1].getLocalBounds().width) / 2, (GAME_HEIGHT - sprites[1].getLocalBounds().height) / 2));
+    sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - sprites[1]->get_sprite().getLocalBounds().width) / 2, (GAME_HEIGHT - sprites[1]->get_sprite().getLocalBounds().height) / 2));
 
-    window->draw(refreshTexture(1, sprites, textures));
+    window->draw(sprites[1]->get_sprite());
 
-    if(isSpriteClicked(&sprites[1], window)) {
+    if(is_sprite_clicked(sprites[1]->get_sprite(), window)) {
         sounds[0]->play();
         return GAME_STATE_PLAY;
     }
@@ -76,9 +91,9 @@ int MainRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<
     return GAME_STATE_MAIN;
 }
 
-int PlayRoom::play(sf::RenderWindow* window, vector<sf::Sprite> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
+int PlayRoom::play(sf::RenderWindow* window, vector<GameSprite*> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
     //main background
-    window->draw(refreshTexture(0, sprites, textures));
+    window->draw(sprites[0]->get_sprite());
 
     return GAME_STATE_PLAY;
 }

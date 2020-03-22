@@ -49,20 +49,8 @@ void Game::run() {
 }
 
 int Game::add_sprite(string filename, bool is_tiled) {
-    sf::Texture texture;
-    sf::Sprite sprite;
-
-    if(!texture.loadFromFile(filename)) {
-        throw FileGameException();
-    }        
-    sprite.setTexture(texture);
-    if (is_tiled) {
-        texture.setRepeated(true);
-        sprite.setTextureRect(sf::IntRect(0, 0, GAME_WIDTH, GAME_HEIGHT));
-    }
-    sprites.push_back(sprite);
-    textures.push_back(texture);
-
+    sprites.push_back(new GameSprite());
+    sprites.back()->init(filename, is_tiled);
     return sprites.size() - 1;
 }
 

@@ -30,6 +30,18 @@ class GameSprite {
         void set_position(sf::Vector2f position);
 };
 
+class GameMusic {
+    private:
+        sf::Music music;
+        string _src;
+    public:
+        void init(string src);
+        void play();
+        void stop();
+        bool is_playing();
+        void set_loop(bool is_loop);
+};
+
 class Room {
     public:
         Room(Game* game);

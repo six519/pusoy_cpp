@@ -42,6 +42,30 @@ void GameSprite::set_position(sf::Vector2f position) {
     sprite.setPosition(position);
 }
 
+void GameMusic::init(string src) {
+    _src = src;
+    if(!music.openFromFile(src))
+        throw FileGameException();
+}
+
+void GameMusic::play() {
+    music.play();
+}
+
+void GameMusic::stop() {
+    music.stop();
+}
+
+bool GameMusic::is_playing() {
+    if(music.getStatus() == sf::Music::Status::Playing)
+        return true;
+    return false;
+}
+
+void GameMusic::set_loop(bool is_loop) {
+    music.setLoop(is_loop);
+}
+
 Room::Room(Game* game) {
     this->game = game;
 }
@@ -54,7 +78,7 @@ int Room::play() {
 void Room::stop_all_musics(vector<int> ignore_stop) {
     for(int x=0; x < game->musics.size(); x++) {
         if(!any_of(ignore_stop.begin(), ignore_stop.end(), [&x](int i){return i==x;})) {
-            game->music_objects[x].stop();
+            game->musics[x]->stop();
         }
     }
 }
@@ -79,9 +103,9 @@ int MainRoom::play() {
     stop_all_musics(ignore);
 
     //play bg sound
-    game->music_objects[0].setLoop(true);
-    if (game->music_objects[0].getStatus() != sf::Music::Status::Playing)
-        game->music_objects[0].play();
+    game->musics[0]->set_loop(true);
+    if (!game->musics[0]->is_playing())
+        game->musics[0]->play();
 
     //main background
     game->window->draw(game->sprites[0]->get_sprite());

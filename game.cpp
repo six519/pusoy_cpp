@@ -17,7 +17,6 @@ void Game::init() {
 
     add_sounds("sounds/push2.ogg");
 
-    init_musics();
     main_room = new MainRoom(this);
     play_room = new PlayRoom(this);
 }
@@ -55,18 +54,9 @@ int Game::add_sprite(string filename, bool is_tiled) {
 }
 
 int Game::add_music(string filename) {
-    musics.push_back(filename);
+    musics.push_back(new GameMusic());
+    musics.back()->init(filename);
     return musics.size() - 1;
-}
-
-void Game::init_musics() {
-    music_objects = new sf::Music[musics.size()];
-
-    for (int x=0; x < musics.size(); x++) {
-        if(!music_objects[x].openFromFile(musics[x])) {
-            throw FileGameException();
-        }
-    }
 }
 
 void Game::add_sounds(string src) {

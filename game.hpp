@@ -20,8 +20,7 @@ class Game {
         sf::Event* event;
         vector<GameSprite*> sprites;
         vector<sf::Texture> textures;
-        vector<string> musics;
-        sf::Music* music_objects;
+        vector<GameMusic*> musics;
         vector<GameSound*> sounds;
         
         MainRoom* main_room;
@@ -29,7 +28,6 @@ class Game {
 
         int state;
         void run();
-        void init_musics();
         int add_sprite(string filename, bool is_tiled = false);
         int add_music(string filename);
 

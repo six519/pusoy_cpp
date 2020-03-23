@@ -42,7 +42,11 @@ void GameSprite::set_position(sf::Vector2f position) {
     sprite.setPosition(position);
 }
 
-int Room::play(sf::RenderWindow* window, vector<GameSprite*> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
+Room::Room(Game* game) {
+    this->game = game;
+}
+
+int Room::play() {
 
     return GAME_STATE_MAIN;
 }
@@ -66,34 +70,42 @@ bool Room::is_sprite_clicked(sf::Sprite sprite, sf::RenderWindow *window) {
     return false;
 }
 
-int MainRoom::play(sf::RenderWindow* window, vector<GameSprite*> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
+MainRoom::MainRoom(Game* game): Room(game) {
+
+}
+
+int MainRoom::play() {
     vector<int> ignore = {0};
-    stop_all_musics(musics, music_objects, ignore);
+    stop_all_musics(game->musics, game->music_objects, ignore);
 
     //play bg sound
-    music_objects[0].setLoop(true);
-    if (music_objects[0].getStatus() != sf::Music::Status::Playing)
-        music_objects[0].play();
+    game->music_objects[0].setLoop(true);
+    if (game->music_objects[0].getStatus() != sf::Music::Status::Playing)
+        game->music_objects[0].play();
 
     //main background
-    window->draw(sprites[0]->get_sprite());
+    game->window->draw(game->sprites[0]->get_sprite());
 
     //center title
-    sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - sprites[1]->get_sprite().getLocalBounds().width) / 2, (GAME_HEIGHT - sprites[1]->get_sprite().getLocalBounds().height) / 2));
+    game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, (GAME_HEIGHT - game->sprites[1]->get_sprite().getLocalBounds().height) / 2));
 
-    window->draw(sprites[1]->get_sprite());
+    game->window->draw(game->sprites[1]->get_sprite());
 
-    if(is_sprite_clicked(sprites[1]->get_sprite(), window)) {
-        sounds[0]->play();
+    if(is_sprite_clicked(game->sprites[1]->get_sprite(), game->window)) {
+        game->sounds[0]->play();
         return GAME_STATE_PLAY;
     }
 
     return GAME_STATE_MAIN;
 }
 
-int PlayRoom::play(sf::RenderWindow* window, vector<GameSprite*> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds) {
+PlayRoom::PlayRoom(Game* game): Room(game) {
+
+}
+
+int PlayRoom::play() {
     //main background
-    window->draw(sprites[0]->get_sprite());
+    game->window->draw(game->sprites[0]->get_sprite());
 
     return GAME_STATE_PLAY;
 }

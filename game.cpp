@@ -18,8 +18,8 @@ void Game::init() {
     add_sounds("sounds/push2.ogg");
 
     init_musics();
-    main_room = new MainRoom();
-    play_room = new PlayRoom();
+    main_room = new MainRoom(this);
+    play_room = new PlayRoom(this);
 }
 
 void Game::run() {
@@ -39,10 +39,10 @@ void Game::run() {
         // draw sprites and stuff here
         switch(state) {
             case GAME_STATE_PLAY:
-                state = play_room->play(window, sprites, textures, music_objects, musics, sounds);
+                state = play_room->play();
             break;
             default:
-                state = main_room->play(window, sprites, textures, music_objects, musics, sounds);
+                state = main_room->play();
         }
         window->display();
     }

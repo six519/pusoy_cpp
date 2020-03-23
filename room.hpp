@@ -6,6 +6,8 @@
 
 using namespace std;
 
+class Game;
+
 class GameSound {
     private:
         sf::SoundBuffer buffer;
@@ -30,19 +32,24 @@ class GameSprite {
 
 class Room {
     public:
-        int play(sf::RenderWindow* window, vector<GameSprite*> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds);
+        Room(Game* game);
+        int play();
         void stop_all_musics(vector<string> musics, sf::Music* music_objects, vector<int> ignore_stop);
         bool is_sprite_clicked(sf::Sprite sprite, sf::RenderWindow *window);
+    protected:
+        Game* game;
 };
 
 class MainRoom: public Room {
     public:
-        int play(sf::RenderWindow* window, vector<GameSprite*> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds);
+        MainRoom(Game* game);
+        int play();
 };
 
 class PlayRoom: public Room {
     public:
-        int play(sf::RenderWindow* window, vector<GameSprite*> sprites, vector<sf::Texture> textures, sf::Music* music_objects, vector<string> musics, vector<GameSound*> sounds);
+        PlayRoom(Game* game);
+        int play();
 };
 
 #endif

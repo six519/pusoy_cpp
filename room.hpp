@@ -35,7 +35,7 @@ class Room {
         Room(Game* game);
         int play();
         void stop_all_musics(vector<string> musics, sf::Music* music_objects, vector<int> ignore_stop);
-        bool is_sprite_clicked(sf::Sprite sprite, sf::RenderWindow *window);
+        bool is_sprite_clicked(sf::Sprite sprite);
     protected:
         Game* game;
 };

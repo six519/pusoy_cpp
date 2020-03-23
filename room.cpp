@@ -59,9 +59,9 @@ void Room::stop_all_musics(vector<string> musics, sf::Music* music_objects, vect
     }
 }
 
-bool Room::is_sprite_clicked(sf::Sprite sprite, sf::RenderWindow *window) {
-    auto mouse_pos = sf::Mouse::getPosition(*window);
-    auto translated_pos = window->mapPixelToCoords(mouse_pos);
+bool Room::is_sprite_clicked(sf::Sprite sprite) {
+    auto mouse_pos = sf::Mouse::getPosition(*game->window);
+    auto translated_pos = game->window->mapPixelToCoords(mouse_pos);
 
     if(sprite.getGlobalBounds().contains(translated_pos) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         return true;
@@ -91,7 +91,7 @@ int MainRoom::play() {
 
     game->window->draw(game->sprites[1]->get_sprite());
 
-    if(is_sprite_clicked(game->sprites[1]->get_sprite(), game->window)) {
+    if(is_sprite_clicked(game->sprites[1]->get_sprite())) {
         game->sounds[0]->play();
         return GAME_STATE_PLAY;
     }

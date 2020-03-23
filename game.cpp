@@ -4,6 +4,7 @@
 #include <iostream>
 #include "game.hpp"
 #include "exception.hpp"
+#include "resource.hpp"
 
 void Game::init() {
     //initialization of all vars and other stuff here

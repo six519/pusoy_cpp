@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "room.hpp"
+#include "resource.hpp"
 
 using namespace std;
 

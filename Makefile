@@ -5,7 +5,7 @@ CFLAGS = -Wall -g
 
 LIBS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-SRCS = main.cpp game.cpp room.cpp exception.cpp
+SRCS = main.cpp game.cpp room.cpp exception.cpp resource.cpp
 
 OBJS = $(SRCS:.c=.o)
 
@@ -23,4 +23,4 @@ $(MAIN): $(OBJS)
 		$(CC) $(CFLAGS) -c $<  -o $@
 
 clean:
-		$(RM) *.o *~ $(MAIN)
+		$(RM) -r *.o *~ $(MAIN) $(MAIN).dSYM

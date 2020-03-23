@@ -51,10 +51,10 @@ int Room::play() {
     return GAME_STATE_MAIN;
 }
 
-void Room::stop_all_musics(vector<string> musics, sf::Music* music_objects, vector<int> ignore_stop) {
-    for(int x=0; x < musics.size(); x++) {
+void Room::stop_all_musics(vector<int> ignore_stop) {
+    for(int x=0; x < game->musics.size(); x++) {
         if(!any_of(ignore_stop.begin(), ignore_stop.end(), [&x](int i){return i==x;})) {
-            music_objects[x].stop();
+            game->music_objects[x].stop();
         }
     }
 }
@@ -76,7 +76,7 @@ MainRoom::MainRoom(Game* game): Room(game) {
 
 int MainRoom::play() {
     vector<int> ignore = {0};
-    stop_all_musics(game->musics, game->music_objects, ignore);
+    stop_all_musics(ignore);
 
     //play bg sound
     game->music_objects[0].setLoop(true);

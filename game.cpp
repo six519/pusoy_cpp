@@ -25,6 +25,8 @@ void Game::init() {
 void Game::run() {
     //initialize game
     init();
+    //init main room
+    main_room->init();
 
     while (window->isOpen()) {
         event = new sf::Event();
@@ -33,16 +35,25 @@ void Game::run() {
             if (event->type == sf::Event::Closed) {
                 window->close();
             }
+            if(event->type == sf::Event::MouseButtonPressed) {
+                switch(state) {
+                    case GAME_STATE_PLAY:
+                        play_room->click();
+                    break;
+                    default:
+                        main_room->click();
+                }
+            }
         }
 
         window->clear();
-        // draw sprites and stuff here
+        // draw sprites here
         switch(state) {
             case GAME_STATE_PLAY:
-                state = play_room->play();
+                play_room->draw();
             break;
             default:
-                state = main_room->play();
+                main_room->draw();
         }
         window->display();
     }

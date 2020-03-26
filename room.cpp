@@ -12,10 +12,7 @@ Room::Room(Game* game) {
     this->game = game;
 }
 
-int Room::play() {
-
-    return GAME_STATE_MAIN;
-}
+void Room::draw() {}
 
 void Room::stop_all_musics(vector<int> ignore_stop) {
     for(int x=0; x < game->musics.size(); x++) {
@@ -36,11 +33,9 @@ bool Room::is_sprite_clicked(sf::Sprite sprite) {
     return false;
 }
 
-MainRoom::MainRoom(Game* game): Room(game) {
+MainRoom::MainRoom(Game* game): Room(game) {}
 
-}
-
-int MainRoom::play() {
+void MainRoom::init() {
     vector<int> ignore = {0};
     stop_all_musics(ignore);
 
@@ -49,29 +44,36 @@ int MainRoom::play() {
     if (!game->musics[0]->is_playing())
         game->musics[0]->play();
 
-    //main background
-    game->window->draw(game->sprites[0]->get_sprite());
-
     //center title
     game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, (GAME_HEIGHT - game->sprites[1]->get_sprite().getLocalBounds().height) / 2));
+}
 
-    game->window->draw(game->sprites[1]->get_sprite());
-
+void MainRoom::click() {
     if(is_sprite_clicked(game->sprites[1]->get_sprite())) {
         game->sounds[0]->play();
-        return GAME_STATE_PLAY;
+        game->play_room->init();
+        game->state = GAME_STATE_PLAY;
     }
-
-    return GAME_STATE_MAIN;
 }
 
-PlayRoom::PlayRoom(Game* game): Room(game) {
+void MainRoom::draw() {
+    //main background
+    game->window->draw(game->sprites[0]->get_sprite());
+    game->window->draw(game->sprites[1]->get_sprite());
+}
+
+PlayRoom::PlayRoom(Game* game): Room(game) {}
+
+void PlayRoom::init() {
+    
+}
+
+void PlayRoom::click() {
 
 }
 
-int PlayRoom::play() {
+void PlayRoom::draw() {
     //main background
     game->window->draw(game->sprites[0]->get_sprite());
 
-    return GAME_STATE_PLAY;
 }

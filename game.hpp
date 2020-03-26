@@ -15,6 +15,29 @@ const string GAME_TITLE = "Pusoy Dos";
 const int GAME_STATE_MAIN = 0;
 const int GAME_STATE_PLAY = 1;
 
+const vector<string> CARD_SUITES = {
+    "clubs",
+    "spades",
+    "hearts",
+    "diamonds"
+};
+
+const vector<string> CARD_PIPS = {
+    "3",
+    "4",
+    "5",
+    "6"
+    "7",
+    "8",
+    "9"
+    "10",
+    "jack",
+    "queen",
+    "king",
+    "ace",
+    "2"
+};
+
 class Game {
     public:
         sf::RenderWindow* window;

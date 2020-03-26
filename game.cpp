@@ -10,9 +10,13 @@ void Game::init() {
     //initialization of all vars and other stuff here
     window = new sf::RenderWindow(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), GAME_TITLE, sf::Style::Titlebar | sf::Style::Close);
     state = GAME_STATE_MAIN;
+    is_music_on = true;
 
     add_sprite("sprites/p2.jpg", true);
     add_sprite("sprites/title.png");
+    add_sprite("sprites/button_sound_on.png");
+    add_sprite("sprites/button_sound_off.png");
+    add_sprite("sprites/button_reset.png");
 
     add_music("sounds/bg_sound.ogg");
 

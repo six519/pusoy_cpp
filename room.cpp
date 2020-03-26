@@ -65,15 +65,30 @@ void MainRoom::draw() {
 PlayRoom::PlayRoom(Game* game): Room(game) {}
 
 void PlayRoom::init() {
-    
+    game->sprites[2]->set_position(sf::Vector2f(10, 10));
+    game->sprites[3]->set_position(sf::Vector2f(10, 10));
 }
 
 void PlayRoom::click() {
-
+    if(is_sprite_clicked(game->sprites[2]->get_sprite())) {
+        game->sounds[0]->play();
+        if(game->is_music_on) {
+            game->is_music_on = false;
+            game->musics[0]->pause();
+        } else {
+            game->is_music_on = true;
+            game->musics[0]->play();
+        }
+    }
 }
 
 void PlayRoom::draw() {
     //main background
     game->window->draw(game->sprites[0]->get_sprite());
-
+    //music button
+    if(game->is_music_on) {
+        game->window->draw(game->sprites[2]->get_sprite());
+    } else {
+        game->window->draw(game->sprites[3]->get_sprite());
+    }
 }

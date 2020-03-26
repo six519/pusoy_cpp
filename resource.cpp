@@ -55,6 +55,10 @@ void GameMusic::stop() {
     music.stop();
 }
 
+void GameMusic::pause() {
+    music.pause();
+}
+
 bool GameMusic::is_playing() {
     if(music.getStatus() == sf::Music::Status::Playing)
         return true;

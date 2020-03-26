@@ -23,6 +23,7 @@ class Game {
         vector<sf::Texture> textures;
         vector<GameMusic*> musics;
         vector<GameSound*> sounds;
+        bool is_music_on;
         
         MainRoom* main_room;
         PlayRoom* play_room;

@@ -36,6 +36,7 @@ class GameMusic {
         void init(string src);
         void play();
         void stop();
+        void pause();
         bool is_playing();
         void set_loop(bool is_loop);
 };

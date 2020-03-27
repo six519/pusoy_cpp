@@ -32,7 +32,7 @@ void Game::init() {
     play_room = new PlayRoom(this);
 }
 
-void Game::load_cards(vector<string> pips, vector<GameCard> game_card, bool make_map) {
+void Game::load_cards(vector<string> pips, vector<GameCard> &game_card, bool make_map) {
     for(int x=0; x<pips.size(); x++) {
         for(int x2=0; x2<CARD_SUITES.size(); x2++) {
             if (make_map) {

@@ -19,6 +19,8 @@ void Game::init() {
     add_sprite("sprites/button_sound_on.png");
     add_sprite("sprites/button_sound_off.png");
     add_sprite("sprites/button_reset.png");
+    add_sprite("sprites/button_move.png");
+    add_sprite("sprites/button_pass.png");
 
     //load card sprites and map it
     load_cards(CARD_PIPS, cards, true);

@@ -97,6 +97,18 @@ void PlayRoom::init() {
         game->sprites[sprite_index]->set_position(sf::Vector2f(current_x, current_y));
 
         current_x += CARD_PEEK_WIDTH;
+
+        if(x == 12) {
+            int total_player_x = current_x + (CARD_WIDTH - CARD_PEEK_WIDTH);
+            //pass button
+            int last_current_x = ((GAME_WIDTH - total_player_x) / 2) - (game->sprites[6]->get_sprite().getLocalBounds().width / 2);
+            int last_current_y = (((GAME_HEIGHT - current_y) /2) - (game->sprites[6]->get_sprite().getLocalBounds().height / 2)) + current_y;
+            game->sprites[5]->set_position(sf::Vector2f(last_current_x, last_current_y));
+            //move button
+            last_current_x = (((GAME_WIDTH - total_player_x) / 2) - (game->sprites[5]->get_sprite().getLocalBounds().width / 2)) + total_player_x;
+            last_current_y = (((GAME_HEIGHT - current_y) /2) - (game->sprites[5]->get_sprite().getLocalBounds().height / 2)) + current_y; 
+            game->sprites[6]->set_position(sf::Vector2f(last_current_x, last_current_y));
+        }
     }
 
     //music on/off button
@@ -148,4 +160,8 @@ void PlayRoom::draw() {
         if(this_card.show)
         game->window->draw(game->sprites[sprite_index]->get_sprite());
     }
+
+    //draw game buttons
+    game->window->draw(game->sprites[5]->get_sprite());
+    game->window->draw(game->sprites[6]->get_sprite());
 }

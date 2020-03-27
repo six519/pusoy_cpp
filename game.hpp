@@ -15,6 +15,9 @@ const int GAME_HEIGHT = 600;
 const string GAME_TITLE = "Pusoy Dos";
 const int GAME_STATE_MAIN = 0;
 const int GAME_STATE_PLAY = 1;
+const int CARD_PEEK_WIDTH = 30;
+const int CARD_PEEK_WIDTH_AI = 10;
+const int CARD_SELECTED_Y = 20;
 
 const vector<string> CARD_SUITES = {
     "clubs",

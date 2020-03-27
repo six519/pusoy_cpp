@@ -20,12 +20,9 @@ void Game::init() {
     add_sprite("sprites/button_reset.png");
 
     //load card sprites and map it
-    for(int x=0; x<CARD_PIPS.size(); x++) {
-        for(int x2=0; x2<CARD_SUITES.size(); x2++) {
-            int index = add_sprite("sprites/cards/" + CARD_PIPS[x] + "_of_" + CARD_SUITES[x2] + ".png");
-            sprite_mappings.insert(pair<string, int>(CARD_PIPS[x] + CARD_SUITES[x2], index));
-        }
-    }
+    load_cards(CARD_PIPS, cards, true);
+    load_cards(CARD_PIPS_STRAIGHT, cards_straight);
+    load_cards(CARD_PIPS_FLUSH, cards_flush);
 
     add_music("sounds/bg_sound.ogg");
 
@@ -33,6 +30,21 @@ void Game::init() {
 
     main_room = new MainRoom(this);
     play_room = new PlayRoom(this);
+}
+
+void Game::load_cards(vector<string> pips, vector<GameCard> game_card, bool make_map) {
+    for(int x=0; x<pips.size(); x++) {
+        for(int x2=0; x2<CARD_SUITES.size(); x2++) {
+            if (make_map) {
+                int index = add_sprite("sprites/cards/" + pips[x] + "_of_" + CARD_SUITES[x2] + ".png");
+                sprite_mappings.insert(pair<string, int>(pips[x] + CARD_SUITES[x2], index));
+            }
+            GameCard this_card;
+            this_card.name = pips[x];
+            this_card.suit = CARD_SUITES[x2];
+            game_card.push_back(this_card);
+        }
+    }
 }
 
 void Game::run() {

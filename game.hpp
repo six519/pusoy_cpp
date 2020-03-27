@@ -92,6 +92,8 @@ class Game {
         vector<GameSound*> sounds;
         bool is_music_on;
         vector<GameCard> cards;
+        vector<GameCard> cards_straight;
+        vector<GameCard> cards_flush;
         map<string, int> sprite_mappings;
         
         MainRoom* main_room;
@@ -103,6 +105,7 @@ class Game {
         int add_music(string filename);
 
         void add_sounds(string src);
+        void load_cards(vector<string> pips, vector<GameCard> game_card, bool make_map = false);
 
     private:
         void init();

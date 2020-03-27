@@ -164,6 +164,34 @@ void PlayRoom::draw() {
         game->window->draw(game->sprites[sprite_index]->get_sprite());
     }
 
+    //draw cards for AI
+    for(int x=0; x < 3; x++) {
+        int current_x;
+        int current_y;
+
+        if(x == 0) {
+            //AI 1
+            current_x = GAME_EDGE_PADDING;
+            current_y = (GAME_HEIGHT / 2) - (CARD_BACK_HEIGHT / 2);
+        } else if(x == 1) {
+            //AI 2
+            current_x = (GAME_WIDTH / 2) - ((CARD_PEEK_WIDTH_AI * 12 + CARD_BACK_WIDTH) / 2);
+            current_y = GAME_EDGE_PADDING;
+        } else {
+            //AI 3
+            current_x = GAME_WIDTH - (CARD_PEEK_WIDTH_AI * 12 + CARD_BACK_WIDTH) - GAME_EDGE_PADDING;
+            current_y = (GAME_HEIGHT / 2) - (CARD_BACK_HEIGHT / 2);
+        }
+
+        //draw cards
+        for(int x2=0; x2 < game->player_cards[x+1].size(); x2++) {
+            game->sprites[7]->set_position(sf::Vector2f(current_x, current_y));
+            game->window->draw(game->sprites[7]->get_sprite());
+            current_x += CARD_PEEK_WIDTH_AI;
+        }
+
+    }
+
     //draw game buttons
     game->window->draw(game->sprites[5]->get_sprite());
     game->window->draw(game->sprites[6]->get_sprite());

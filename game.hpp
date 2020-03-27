@@ -23,6 +23,8 @@ const int CARD_WIDTH = 120;
 const int CARD_HEIGHT = 174;
 const int CARD_TOTAL_WIDTH = CARD_PEEK_WIDTH * 12 + CARD_WIDTH;
 const int CARD_PLAYER_Y = GAME_HEIGHT - CARD_HEIGHT - GAME_EDGE_PADDING;
+const int CARD_BACK_WIDTH = 110;
+const int CARD_BACK_HEIGHT = 160;
 
 const vector<string> CARD_SUITES = {
     "clubs",

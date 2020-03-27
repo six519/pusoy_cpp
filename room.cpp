@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 #include "room.hpp"
 #include "game.hpp"
 #include "exception.hpp"
@@ -67,6 +68,36 @@ PlayRoom::PlayRoom(Game* game): Room(game) {}
 void PlayRoom::init() {
     //generate random cards
     vector<int> random_cards = game->shuffle_cards();
+    vector<int> temporary_cards;
+    int current_x = (GAME_WIDTH / 2) - (CARD_TOTAL_WIDTH / 2);
+    int current_y = CARD_PLAYER_Y;
+
+    game->player_cards.clear();
+
+    //generate card for the user
+    for(int x=0; x < 13; x++) {
+        int index = random_cards.back();
+        random_cards.pop_back();
+        temporary_cards.push_back(index);
+    }
+
+    //sort cards from lowest to highest
+    sort(temporary_cards.begin(), temporary_cards.end());
+
+    //push card indexes for user
+    game->player_cards.push_back(temporary_cards);
+    temporary_cards.clear();
+
+    //set initial positions of the user cards
+    for(int x=0; x < 13; x++) {
+        //get card reference first
+        GameCard this_card = game->cards[game->player_cards[0][x]];
+        //get sprite mapping
+        int sprite_index = game->sprite_mappings[this_card.name + this_card.suit];
+        game->sprites[sprite_index]->set_position(sf::Vector2f(current_x, current_y));
+
+        current_x += CARD_PEEK_WIDTH;
+    }
 
     //music on/off button
     game->sprites[2]->set_position(sf::Vector2f(10, 10));
@@ -89,7 +120,10 @@ void PlayRoom::click() {
     }
 
     if(is_sprite_clicked(game->sprites[4]->get_sprite())) {
+        //reset button
         game->sounds[0]->play();
+        //reset all here
+        game->play_room->init();
     }
 }
 
@@ -104,4 +138,14 @@ void PlayRoom::draw() {
     }
     //reset button
     game->window->draw(game->sprites[4]->get_sprite());
+
+    //draw cards
+    //draw user cards
+    for(int x=0; x < game->player_cards[0].size(); x++) {
+        GameCard this_card = game->cards[game->player_cards[0][x]];
+        int sprite_index = game->sprite_mappings[this_card.name + this_card.suit];
+
+        if(this_card.show)
+        game->window->draw(game->sprites[sprite_index]->get_sprite());
+    }
 }

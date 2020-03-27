@@ -10,14 +10,19 @@
 
 using namespace std;
 
+const string GAME_TITLE = "Pusoy Dos";
 const int GAME_WIDTH = 1024;
 const int GAME_HEIGHT = 600;
-const string GAME_TITLE = "Pusoy Dos";
 const int GAME_STATE_MAIN = 0;
 const int GAME_STATE_PLAY = 1;
+const int GAME_EDGE_PADDING = 5;
 const int CARD_PEEK_WIDTH = 30;
 const int CARD_PEEK_WIDTH_AI = 10;
 const int CARD_SELECTED_Y = 20;
+const int CARD_WIDTH = 120;
+const int CARD_HEIGHT = 174;
+const int CARD_TOTAL_WIDTH = CARD_PEEK_WIDTH * 12 + CARD_WIDTH;
+const int CARD_PLAYER_Y = GAME_HEIGHT - CARD_HEIGHT - GAME_EDGE_PADDING;
 
 const vector<string> CARD_SUITES = {
     "clubs",
@@ -98,6 +103,7 @@ class Game {
         vector<GameCard> cards_straight;
         vector<GameCard> cards_flush;
         map<string, int> sprite_mappings;
+        vector<vector<int>> player_cards;
         
         MainRoom* main_room;
         PlayRoom* play_room;

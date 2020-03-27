@@ -45,6 +45,7 @@ class GameCard {
     public:
         string name;
         string suit;
+        bool show = true;
 };
 
 #endif

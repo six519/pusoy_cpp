@@ -106,6 +106,7 @@ class Game {
 
         void add_sounds(string src);
         void load_cards(vector<string> pips, vector<GameCard> &game_card, bool make_map = false);
+        vector<int> shuffle_cards();
 
     private:
         void init();

@@ -65,6 +65,9 @@ void MainRoom::draw() {
 PlayRoom::PlayRoom(Game* game): Room(game) {}
 
 void PlayRoom::init() {
+    //generate random cards
+    vector<int> random_cards = game->shuffle_cards();
+
     //music on/off button
     game->sprites[2]->set_position(sf::Vector2f(10, 10));
     game->sprites[3]->set_position(sf::Vector2f(10, 10));

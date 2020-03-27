@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <algorithm>
 #include "game.hpp"
 #include "exception.hpp"
 #include "resource.hpp"
@@ -99,4 +100,17 @@ int Game::add_music(string filename) {
 void Game::add_sounds(string src) {
     sounds.push_back(new GameSound());
     sounds.back()->init(src);
+}
+
+vector<int> Game::shuffle_cards() {
+    vector<int> index_cards;
+
+    while (index_cards.size() < 52) {
+        int x = rand() % (52 - 0) +  0;
+        if(!any_of(index_cards.begin(), index_cards.end(), [&x](int i){return i==x;})) {
+            index_cards.push_back(x);
+        }
+    }
+
+    return index_cards;
 }

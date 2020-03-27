@@ -74,19 +74,22 @@ void PlayRoom::init() {
 
     game->player_cards.clear();
 
-    //generate card for the user
-    for(int x=0; x < 13; x++) {
-        int index = random_cards.back();
-        random_cards.pop_back();
-        temporary_cards.push_back(index);
+    //distribute cards
+    for(int x2=0; x2<4; x2++) {
+        //generate card per player
+        for(int x=0; x < 13; x++) {
+            int index = random_cards.back();
+            random_cards.pop_back();
+            temporary_cards.push_back(index);
+        }
+
+        //sort cards from lowest to highest
+        sort(temporary_cards.begin(), temporary_cards.end());
+
+        //push card indexes per player
+        game->player_cards.push_back(temporary_cards);
+        temporary_cards.clear();
     }
-
-    //sort cards from lowest to highest
-    sort(temporary_cards.begin(), temporary_cards.end());
-
-    //push card indexes for user
-    game->player_cards.push_back(temporary_cards);
-    temporary_cards.clear();
 
     //set initial positions of the user cards
     for(int x=0; x < 13; x++) {

@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include <string>
 #include <iostream>
+#include <map>
 #include "game.hpp"
 #include "exception.hpp"
 #include "resource.hpp"
@@ -17,6 +18,14 @@ void Game::init() {
     add_sprite("sprites/button_sound_on.png");
     add_sprite("sprites/button_sound_off.png");
     add_sprite("sprites/button_reset.png");
+
+    //load card sprites and map it
+    for(int x=0; x<CARD_PIPS.size(); x++) {
+        for(int x2=0; x2<CARD_SUITES.size(); x2++) {
+            int index = add_sprite("sprites/cards/" + CARD_PIPS[x] + "_of_" + CARD_SUITES[x2] + ".png");
+            sprite_mappings.insert(pair<string, int>(CARD_PIPS[x] + CARD_SUITES[x2], index));
+        }
+    }
 
     add_music("sounds/bg_sound.ogg");
 

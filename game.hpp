@@ -4,6 +4,7 @@
 #include <SFML/Audio.hpp>
 #include <string>
 #include <vector>
+#include <map>
 #include "room.hpp"
 #include "resource.hpp"
 
@@ -26,16 +27,59 @@ const vector<string> CARD_PIPS = {
     "3",
     "4",
     "5",
-    "6"
+    "6",
     "7",
     "8",
-    "9"
+    "9",
     "10",
     "jack",
     "queen",
     "king",
     "ace",
     "2"
+};
+
+const vector<string> CARD_PIPS_STRAIGHT = {
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "jack",
+    "queen",
+    "king",
+    "ace"
+};
+
+const vector<string> CARD_PIPS_FLUSH = {
+    "ace",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "jack",
+    "queen",
+    "king"
+};
+
+const vector<string> CARD_MODES = {
+    "single",
+    "par",
+    "trio",
+    "straight",
+    "flush",
+    "fullhouse",
+    "quadra",
+    "royal_flush"
 };
 
 class Game {
@@ -47,6 +91,8 @@ class Game {
         vector<GameMusic*> musics;
         vector<GameSound*> sounds;
         bool is_music_on;
+        vector<GameCard> cards;
+        map<string, int> sprite_mappings;
         
         MainRoom* main_room;
         PlayRoom* play_room;

@@ -41,4 +41,10 @@ class GameMusic {
         void set_loop(bool is_loop);
 };
 
+class GameCard {
+    public:
+        string name;
+        string suit;
+};
+
 #endif

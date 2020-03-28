@@ -37,7 +37,6 @@ bool Room::is_sprite_clicked(sf::Sprite sprite) {
 MainRoom::MainRoom(Game* game): Room(game) {}
 
 void MainRoom::init() {
-    cout << "INIT\n";
     vector<int> ignore = {0};
     stop_all_musics(ignore);
 

@@ -81,6 +81,8 @@ void PlayRoom::init() {
     game->text_name.setCharacterSize(24); //24px
     game->text_name.setFillColor(sf::Color::Black);
     game->text_name.setStyle(sf::Text::Bold);
+    game->text_name.setOutlineColor(sf::Color::White);
+    game->text_name.setOutlineThickness(3);
 
     //distribute cards
     for(int x2=0; x2<4; x2++) {

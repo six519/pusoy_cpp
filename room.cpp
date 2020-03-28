@@ -45,8 +45,8 @@ void MainRoom::init() {
     if (!game->musics[0]->is_playing())
         game->musics[0]->play();
 
-    //center title
-    game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, (GAME_HEIGHT - game->sprites[1]->get_sprite().getLocalBounds().height) / 2));
+    //set title y to out of screen
+    game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, 0 - game->sprites[1]->get_sprite().getLocalBounds().height));
 }
 
 void MainRoom::click() {
@@ -60,6 +60,16 @@ void MainRoom::click() {
 void MainRoom::draw() {
     //main background
     game->window->draw(game->sprites[0]->get_sprite());
+    //title sprite
+    float center_y = (GAME_HEIGHT - game->sprites[1]->get_sprite().getLocalBounds().height) / 2;
+    static float additional_y = 0 - game->sprites[1]->get_sprite().getLocalBounds().height;
+
+    if (additional_y < center_y) {
+        //sliding in title
+        additional_y += 0.1;
+        game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, additional_y));
+    }
+        
     game->window->draw(game->sprites[1]->get_sprite());
 }
 

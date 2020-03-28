@@ -32,6 +32,8 @@ void Game::init() {
 
     add_sounds("sounds/push2.ogg");
 
+    add_font("fonts/Roboto-Black.ttf");
+
     main_room = new MainRoom(this);
     play_room = new PlayRoom(this);
 }
@@ -105,6 +107,16 @@ void Game::add_sounds(string src) {
     sounds.back()->init(src);
 }
 
+int Game::add_font(string filename) {
+    sf::Font font;
+
+    if(!font.loadFromFile(filename)) {
+        throw FileGameException();
+    }
+    fonts.push_back(font);
+    return fonts.size() - 1;
+}
+
 vector<int> Game::shuffle_cards() {
     vector<int> index_cards;
 
@@ -116,4 +128,14 @@ vector<int> Game::shuffle_cards() {
     }
 
     return index_cards;
+}
+
+void Game::scramble_names() {
+    player_names.clear();
+    while (player_names.size() < 3) {
+        int x = rand() % (21 - 0) +  0;
+        if(!any_of(player_names.begin(), player_names.end(), [&x](int i){return i==x;})) {
+            player_names.push_back(x);
+        }
+    }
 }

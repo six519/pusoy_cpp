@@ -92,6 +92,30 @@ const vector<string> CARD_MODES = {
     "royal_flush"
 };
 
+const vector<string> AI_PLAYER_NAMES_LIST = {
+    "Uriel",
+    "Patrick",
+    "Umiko",
+    "Charmaine",
+    "Buboy",
+    "Unisse",
+    "Rodolfo",
+    "Aurora",
+    "Ruel",
+    "Fernando",
+    "Ferdinand",
+    "Yannah",
+    "Yenyen",
+    "Joan",
+    "Rodel",
+    "Tim",
+    "Trisha",
+    "Chat",
+    "Myrna",
+    "Venus",
+    "Unica"
+};
+
 class Game {
     public:
         sf::RenderWindow* window;
@@ -102,10 +126,13 @@ class Game {
         vector<GameSound*> sounds;
         bool is_music_on;
         vector<GameCard> cards;
+        vector<int> player_names;
         vector<GameCard> cards_straight;
         vector<GameCard> cards_flush;
         map<string, int> sprite_mappings;
         vector<vector<int>> player_cards;
+        vector<sf::Font> fonts;
+        sf::Text text_name;
         
         MainRoom* main_room;
         PlayRoom* play_room;
@@ -114,9 +141,11 @@ class Game {
         void run();
         int add_sprite(string filename, bool is_tiled = false);
         int add_music(string filename);
+        int add_font(string filename);
 
         void add_sounds(string src);
         void load_cards(vector<string> pips, vector<GameCard> &game_card, bool make_map = false);
+        void scramble_names();
         vector<int> shuffle_cards();
 
     private:

@@ -74,6 +74,14 @@ void PlayRoom::init() {
 
     game->player_cards.clear();
 
+    //generate random opponent names
+    game->scramble_names();
+    //set names text options
+    game->text_name.setFont(game->fonts[0]);
+    game->text_name.setCharacterSize(24); //24px
+    game->text_name.setFillColor(sf::Color::Black);
+    game->text_name.setStyle(sf::Text::Bold);
+
     //distribute cards
     for(int x2=0; x2<4; x2++) {
         //generate card per player
@@ -164,23 +172,30 @@ void PlayRoom::draw() {
         game->window->draw(game->sprites[sprite_index]->get_sprite());
     }
 
-    //draw cards for AI
+    //draw cards and names for AI
     for(int x=0; x < 3; x++) {
         int current_x;
         int current_y;
+        int name_x;
+
+        game->text_name.setString(AI_PLAYER_NAMES_LIST[game->player_names[x]]);
 
         if(x == 0) {
             //AI 1
             current_x = GAME_EDGE_PADDING;
             current_y = (GAME_HEIGHT / 2) - (CARD_BACK_HEIGHT / 2);
+            name_x = (((CARD_PEEK_WIDTH_AI * 12 + CARD_BACK_WIDTH) / 2) - (game->text_name.getLocalBounds().width / 2)) + GAME_EDGE_PADDING;
         } else if(x == 1) {
             //AI 2
             current_x = (GAME_WIDTH / 2) - ((CARD_PEEK_WIDTH_AI * 12 + CARD_BACK_WIDTH) / 2);
             current_y = GAME_EDGE_PADDING;
+            name_x = (GAME_WIDTH / 2) - (game->text_name.getLocalBounds().width / 2);
         } else {
             //AI 3
             current_x = GAME_WIDTH - (CARD_PEEK_WIDTH_AI * 12 + CARD_BACK_WIDTH) - GAME_EDGE_PADDING;
             current_y = (GAME_HEIGHT / 2) - (CARD_BACK_HEIGHT / 2);
+            int additional_width = GAME_WIDTH - (CARD_PEEK_WIDTH_AI * 12 + CARD_BACK_WIDTH + GAME_EDGE_PADDING);
+            name_x = (((CARD_PEEK_WIDTH_AI * 12 + CARD_BACK_WIDTH) / 2) - (game->text_name.getLocalBounds().width / 2)) + additional_width;
         }
 
         //draw cards
@@ -190,6 +205,8 @@ void PlayRoom::draw() {
             current_x += CARD_PEEK_WIDTH_AI;
         }
 
+        game->text_name.setPosition(name_x, current_y + CARD_BACK_HEIGHT + GAME_EDGE_PADDING);
+        game->window->draw(game->text_name);
     }
 
     //draw game buttons

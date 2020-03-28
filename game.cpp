@@ -22,6 +22,7 @@ void Game::init() {
     add_sprite("sprites/button_move.png");
     add_sprite("sprites/button_pass.png");
     add_sprite("sprites/cards/card_back.png");
+    add_sprite("sprites/button_backward.png");
 
     //load card sprites and map it
     load_cards(CARD_PIPS, cards, true);

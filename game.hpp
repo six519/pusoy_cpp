@@ -133,6 +133,7 @@ class Game {
         vector<vector<int>> player_cards;
         vector<sf::Font> fonts;
         sf::Text text_name;
+        float title_y;
         
         MainRoom* main_room;
         PlayRoom* play_room;

@@ -37,6 +37,7 @@ bool Room::is_sprite_clicked(sf::Sprite sprite) {
 MainRoom::MainRoom(Game* game): Room(game) {}
 
 void MainRoom::init() {
+    cout << "INIT\n";
     vector<int> ignore = {0};
     stop_all_musics(ignore);
 
@@ -46,7 +47,8 @@ void MainRoom::init() {
         game->musics[0]->play();
 
     //set title y to out of screen
-    game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, 0 - game->sprites[1]->get_sprite().getLocalBounds().height));
+    game->title_y = 0 - game->sprites[1]->get_sprite().getLocalBounds().height;
+    game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, game->title_y));
 }
 
 void MainRoom::click() {
@@ -62,12 +64,11 @@ void MainRoom::draw() {
     game->window->draw(game->sprites[0]->get_sprite());
     //title sprite
     float center_y = (GAME_HEIGHT - game->sprites[1]->get_sprite().getLocalBounds().height) / 2;
-    static float additional_y = 0 - game->sprites[1]->get_sprite().getLocalBounds().height;
 
-    if (additional_y < center_y) {
+    if (game->title_y < center_y) {
         //sliding in title
-        additional_y += 0.1;
-        game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, additional_y));
+        game->title_y += 0.1;
+        game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, game->title_y));
     }
         
     game->window->draw(game->sprites[1]->get_sprite());
@@ -140,6 +141,8 @@ void PlayRoom::init() {
 
     //reset button
     game->sprites[4]->set_position(sf::Vector2f(20 + game->sprites[2]->get_sprite().getLocalBounds().width, 10));
+    //back to main button
+    game->sprites[8]->set_position(sf::Vector2f(90 + game->sprites[8]->get_sprite().getLocalBounds().width, 10));
 }
 
 void PlayRoom::click() {
@@ -160,6 +163,13 @@ void PlayRoom::click() {
         //reset all here
         game->play_room->init();
     }
+
+    if(is_sprite_clicked(game->sprites[8]->get_sprite())) {
+        //return to main button
+        game->sounds[0]->play();
+        game->main_room->init();
+        game->state = GAME_STATE_MAIN;
+    }
 }
 
 void PlayRoom::draw() {
@@ -173,6 +183,8 @@ void PlayRoom::draw() {
     }
     //reset button
     game->window->draw(game->sprites[4]->get_sprite());
+    //back to main button
+    game->window->draw(game->sprites[8]->get_sprite());
 
     //draw cards
     //draw user cards

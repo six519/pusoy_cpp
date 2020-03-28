@@ -82,7 +82,11 @@ void PlayRoom::init() {
     int current_x = (GAME_WIDTH / 2) - (CARD_TOTAL_WIDTH / 2);
     int current_y = CARD_PLAYER_Y;
 
+    //clear distribution of cards to players
     game->player_cards.clear();
+
+    //clear selected cards
+    game->selected_cards_index.clear();
 
     //generate random opponent names
     game->scramble_names();
@@ -109,6 +113,12 @@ void PlayRoom::init() {
         //push card indexes per player
         game->player_cards.push_back(temporary_cards);
         temporary_cards.clear();
+    }
+
+    //reset GameCard objects property to default
+    for(int x=0; x < game->cards.size();x++) {
+        game->cards[x].show = true;
+        game->cards[x].is_selected = false;
     }
 
     //set initial positions of the user cards
@@ -169,6 +179,37 @@ void PlayRoom::click() {
         game->main_room->init();
         game->state = GAME_STATE_MAIN;
     }
+
+    //your cards click events
+    //reverse loop
+    for(int x=game->player_cards[0].size()-1; x >= 0; x--) {
+
+        if (game->cards[game->player_cards[0][x]].show) {
+            int sprite_index = game->sprite_mappings[game->cards[game->player_cards[0][x]].name + game->cards[game->player_cards[0][x]].suit];
+            if(is_sprite_clicked(game->sprites[sprite_index]->get_sprite())) {
+                cout << game->cards[game->player_cards[0][x]].name << game->cards[game->player_cards[0][x]].suit << endl;
+                if (game->cards[game->player_cards[0][x]].is_selected) {
+                    //card selected, make it unselected
+                    game->cards[game->player_cards[0][x]].is_selected = false;
+                    //remove the card from selected cards
+                    game->selected_cards_index.erase(remove(game->selected_cards_index.begin(), game->selected_cards_index.end(), x), game->selected_cards_index.end());
+                    game->sounds[1]->play();
+                } else {
+                    //card unselected, make it selected
+                    if (game->selected_cards_index.size() < 5) {
+                        // ok to select
+                        game->cards[game->player_cards[0][x]].is_selected = true;
+                        game->selected_cards_index.push_back(x);
+                        game->sounds[1]->play();
+                    } else {
+                        //do nothing, just play invalid sound
+                        game->sounds[2]->play();
+                    }
+                }
+                break; //to stop clicking card from the bottom
+            }   
+        }
+    }
 }
 
 void PlayRoom::draw() {
@@ -191,8 +232,15 @@ void PlayRoom::draw() {
         GameCard this_card = game->cards[game->player_cards[0][x]];
         int sprite_index = game->sprite_mappings[this_card.name + this_card.suit];
 
-        if(this_card.show)
-        game->window->draw(game->sprites[sprite_index]->get_sprite());
+        if(this_card.show) {
+            float current_x = game->sprites[sprite_index]->get_sprite().getPosition().x;
+            if (this_card.is_selected) {
+                game->sprites[sprite_index]->set_position(sf::Vector2f(current_x, CARD_PLAYER_Y - CARD_SELECTED_Y));
+            } else {
+                game->sprites[sprite_index]->set_position(sf::Vector2f(current_x, CARD_PLAYER_Y));
+            }
+            game->window->draw(game->sprites[sprite_index]->get_sprite());
+        }
     }
 
     //draw cards and names for AI

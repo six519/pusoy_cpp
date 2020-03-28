@@ -32,6 +32,8 @@ void Game::init() {
     add_music("sounds/bg_sound.ogg");
 
     add_sounds("sounds/push2.ogg");
+    add_sounds("sounds/push.ogg");
+    add_sounds("sounds/label.ogg");
 
     add_font("fonts/Roboto-Black.ttf");
 

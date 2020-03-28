@@ -46,6 +46,7 @@ class GameCard {
         string name;
         string suit;
         bool show = true;
+        bool is_selected = false;
 };
 
 #endif

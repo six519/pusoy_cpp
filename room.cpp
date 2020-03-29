@@ -234,6 +234,24 @@ void PlayRoom::click() {
             }   
         }
     }
+
+    if(is_sprite_clicked(game->sprites[5]->get_sprite())) {
+        //move button
+        if (game->play_state == PLAY_STATE_CARD_PLACE && game->whos_turn == 0) {
+            //can make your turn
+        } else {
+            game->sounds[2]->play();
+        }
+    }
+
+    if(is_sprite_clicked(game->sprites[6]->get_sprite())) {
+        //pass button
+        if (game->play_state == PLAY_STATE_CARD_PLACE && game->whos_turn == 0) {
+            //can pass
+        } else {
+            game->sounds[2]->play();
+        }
+    }
 }
 
 void PlayRoom::draw() {
@@ -345,6 +363,12 @@ void PlayRoom::process_state() {
         //PLAY_STATE_CARD_PLACE
         //place AI card on the board
         game->show_status = false; //hide status
+        if (game->whos_turn == 0) {
+            //your turn
+            stop_timer();
+        } else { 
+            //AI's turn
+        }
     }
 }
 

@@ -82,6 +82,14 @@ void PlayRoom::init() {
     int current_x = (GAME_WIDTH / 2) - (CARD_TOTAL_WIDTH / 2);
     int current_y = CARD_PLAYER_Y;
 
+    //tracker of what current suit/current turn/last turn/status text show
+    game->whos_turn = -1;
+    game->last_turn = -1;
+    game->suite_turn = -1;
+    game->show_status = false;
+    game->timer_running = false;
+    game->play_state = PLAY_STATE_SHOW_WHOS_TURN;
+
     //clear distribution of cards to players
     game->player_cards.clear();
 
@@ -98,6 +106,14 @@ void PlayRoom::init() {
     game->text_name.setOutlineColor(sf::Color::White);
     game->text_name.setOutlineThickness(3);
 
+    //status text from center
+    game->text_status.setFont(game->fonts[0]);
+    game->text_status.setCharacterSize(50); //50px
+    game->text_status.setFillColor(sf::Color::Black);
+    game->text_status.setStyle(sf::Text::Bold);
+    game->text_status.setOutlineColor(sf::Color::White);
+    game->text_status.setOutlineThickness(3);
+
     //distribute cards
     for(int x2=0; x2<4; x2++) {
         //generate card per player
@@ -105,6 +121,10 @@ void PlayRoom::init() {
             int index = random_cards.back();
             random_cards.pop_back();
             temporary_cards.push_back(index);
+
+            //determine first move
+            if (index == 0)
+                game->whos_turn = x2;
         }
 
         //sort cards from lowest to highest
@@ -152,6 +172,10 @@ void PlayRoom::init() {
     game->sprites[4]->set_position(sf::Vector2f(20 + game->sprites[2]->get_sprite().getLocalBounds().width, 10));
     //back to main button
     game->sprites[8]->set_position(sf::Vector2f(90 + game->sprites[8]->get_sprite().getLocalBounds().width, 10));
+
+    //start processing of play state
+    process_state();
+    start_timer();
 }
 
 void PlayRoom::click() {
@@ -283,4 +307,52 @@ void PlayRoom::draw() {
     //draw game buttons
     game->window->draw(game->sprites[5]->get_sprite());
     game->window->draw(game->sprites[6]->get_sprite());
+
+    //handle timer
+    if (game->timer_running) {
+        if ((int)game->timer.getElapsedTime().asSeconds() == 1) {
+            process_state();
+            game->timer.restart();
+        }
+    }
+
+    //draw status text
+    if (game->show_status) {
+        game->text_status.setPosition((GAME_WIDTH / 2) - (game->text_status.getLocalBounds().width / 2), (GAME_HEIGHT / 2) - (game->text_name.getLocalBounds().height / 2));
+        game->window->draw(game->text_status);
+    }
+}
+
+void PlayRoom::process_state() {
+    string whos_turn_status;
+    string with_control;
+    if (game->play_state == PLAY_STATE_SHOW_WHOS_TURN) {
+        //show status who's turn it is
+        if (game->suite_turn == -1 || game->last_turn == game->whos_turn)
+            with_control = " & control";
+
+        if (game->whos_turn > 0) {
+            //AI
+            game->text_status.setString(AI_PLAYER_NAMES_LIST[game->player_names[game->whos_turn - 1]] + "\'s turn" + with_control + "...");
+        } else {
+            //Your turn
+            game->text_status.setString("Your turn" + with_control + "...");
+        }
+        game->play_state = PLAY_STATE_CARD_PLACE;
+        game->show_status = true; //to show the status in draw function
+        game->sounds[2]->play();
+    } else {
+        //PLAY_STATE_CARD_PLACE
+        //place AI card on the board
+        game->show_status = false; //hide status
+    }
+}
+
+void PlayRoom::start_timer() {
+    game->timer_running = true;
+    game->timer.restart();
+}
+
+void PlayRoom::stop_timer() {
+    game->timer_running = false;
 }

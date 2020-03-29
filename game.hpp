@@ -25,6 +25,8 @@ const int CARD_TOTAL_WIDTH = CARD_PEEK_WIDTH * 12 + CARD_WIDTH;
 const int CARD_PLAYER_Y = GAME_HEIGHT - CARD_HEIGHT - GAME_EDGE_PADDING;
 const int CARD_BACK_WIDTH = 110;
 const int CARD_BACK_HEIGHT = 160;
+const int PLAY_STATE_SHOW_WHOS_TURN = 0;
+const int PLAY_STATE_CARD_PLACE = 1;
 
 const vector<string> CARD_SUITES = {
     "clubs",
@@ -133,8 +135,16 @@ class Game {
         vector<vector<int>> player_cards;
         vector<sf::Font> fonts;
         sf::Text text_name;
+        sf::Text text_status;
         float title_y;
         vector<int> selected_cards_index;
+        int whos_turn;
+        int last_turn;
+        int suite_turn;
+        int play_state;
+        bool show_status;
+        sf::Clock timer;
+        bool timer_running;
         
         MainRoom* main_room;
         PlayRoom* play_room;

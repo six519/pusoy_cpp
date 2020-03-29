@@ -34,6 +34,9 @@ class PlayRoom: public Room {
         void draw();
         void init();
         void click();
+        void process_state();
+        void start_timer();
+        void stop_timer();
 };
 
 #endif

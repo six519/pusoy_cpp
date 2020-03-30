@@ -6,6 +6,7 @@
 #include "room.hpp"
 #include "game.hpp"
 #include "exception.hpp"
+#include "resource.hpp"
 
 using namespace std;
 
@@ -95,6 +96,8 @@ void PlayRoom::init() {
 
     //clear selected cards
     game->selected_cards_index.clear();
+    //clear placed cards
+    game->placed_cards_index.clear();
 
     //generate random opponent names
     game->scramble_names();
@@ -379,4 +382,32 @@ void PlayRoom::start_timer() {
 
 void PlayRoom::stop_timer() {
     game->timer_running = false;
+}
+
+int PlayRoom::get_card_index(vector<GameCard> cards_to_check, int card_index){
+    int ret = -1;
+    GameCard this_card = game->cards[card_index];
+    vector<GameCard>::iterator it = find_if(cards_to_check.begin(), cards_to_check.end(), [&this_card](const GameCard &val){
+        if (val.name == this_card.name && val.suit == this_card.suit)
+            return true;
+		return false;
+	});
+
+    if (it != cards_to_check.end())
+        ret = distance(cards_to_check.begin(), it);
+
+    return ret;
+}
+
+int PlayRoom::get_string_index(vector<string> vector_to_check, string value) {
+    int ret = -1;
+    vector<string>::iterator it = find_if(vector_to_check.begin(), vector_to_check.end(), [&value](const string &val){
+        if (val == value)
+            return true;
+		return false;
+	});
+
+    if (it != vector_to_check.end())
+        ret = distance(vector_to_check.begin(), it);
+    return ret;
 }

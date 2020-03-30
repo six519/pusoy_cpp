@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <vector>
+#include "resource.hpp"
 
 using namespace std;
 
@@ -37,6 +38,8 @@ class PlayRoom: public Room {
         void process_state();
         void start_timer();
         void stop_timer();
+        int get_card_index(vector<GameCard> cards_to_check, int card_index);
+        int get_string_index(vector<string> vector_to_check, string value);
 };
 
 #endif

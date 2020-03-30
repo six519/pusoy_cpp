@@ -27,6 +27,14 @@ const int CARD_BACK_WIDTH = 110;
 const int CARD_BACK_HEIGHT = 160;
 const int PLAY_STATE_SHOW_WHOS_TURN = 0;
 const int PLAY_STATE_CARD_PLACE = 1;
+const int TURN_SINGLE = 0;
+const int TURN_PAR = 1;
+const int TURN_TRIO = 2;
+const int TURN_STRAIGHT = 3;
+const int TURN_FLUSH = 4;
+const int TURN_FULL_HOUSE = 5;
+const int TURN_QUADRA = 6;
+const int TURN_ROYAL_FLUSH = 7;
 
 const vector<string> CARD_SUITES = {
     "clubs",
@@ -138,6 +146,7 @@ class Game {
         sf::Text text_status;
         float title_y;
         vector<int> selected_cards_index;
+        vector<int> placed_cards_index;
         int whos_turn;
         int last_turn;
         int suite_turn;

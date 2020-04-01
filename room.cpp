@@ -463,14 +463,17 @@ void PlayRoom::click() {
                     current_x += CARD_PEEK_WIDTH;
                 }
 
-                //TODO: THINK HOW TO REMOVE cards from game->player_cards[0] and for other players
+                //remove cards
+                for (int x=0; x<game->selected_cards_index.size(); x++) {
+                    game->player_cards[0].erase(remove(game->player_cards[0].begin(), game->player_cards[0].end(), game->selected_cards_index[x]), game->player_cards[0].end());
+                }
 
                 game->selected_cards_index.clear();
                 game->last_turn = 0;
                 game->play_state = PLAY_STATE_SHOW_WHOS_TURN;
                 check_whos_turn();
 
-                if (game->player_cards[0].size() == 0) { //TODO: TO MAKE THIS ACCURATE, NEED TO DO THE TODO ABOVE
+                if (game->player_cards[0].size() == 0) {
                     int active_count = 0;
 
                     for (int x=0; x<3; x++) {

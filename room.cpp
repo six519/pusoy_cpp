@@ -214,19 +214,20 @@ void PlayRoom::click() {
         if (game->cards[game->player_cards[0][x]].show) {
             int sprite_index = game->sprite_mappings[game->cards[game->player_cards[0][x]].name + game->cards[game->player_cards[0][x]].suit];
             if(is_sprite_clicked(game->sprites[sprite_index]->get_sprite())) {
-                cout << game->cards[game->player_cards[0][x]].name << game->cards[game->player_cards[0][x]].suit << endl;
+                int index = get_card_index_by_gamecard(game->cards[game->player_cards[0][x]]);
+
                 if (game->cards[game->player_cards[0][x]].is_selected) {
                     //card selected, make it unselected
                     game->cards[game->player_cards[0][x]].is_selected = false;
                     //remove the card from selected cards
-                    game->selected_cards_index.erase(remove(game->selected_cards_index.begin(), game->selected_cards_index.end(), x), game->selected_cards_index.end());
+                    game->selected_cards_index.erase(remove(game->selected_cards_index.begin(), game->selected_cards_index.end(), index), game->selected_cards_index.end());
                     game->sounds[1]->play();
                 } else {
                     //card unselected, make it selected
                     if (game->selected_cards_index.size() < 5) {
                         // ok to select
                         game->cards[game->player_cards[0][x]].is_selected = true;
-                        game->selected_cards_index.push_back(x);
+                        game->selected_cards_index.push_back(index);
                         game->sounds[1]->play();
                     } else {
                         //do nothing, just play invalid sound
@@ -242,6 +243,252 @@ void PlayRoom::click() {
         //move button
         if (game->play_state == PLAY_STATE_CARD_PLACE && game->whos_turn == 0) {
             //can make your turn
+            bool is_valid_turn = false;
+            sort(game->selected_cards_index.begin(), game->selected_cards_index.end());
+            
+            if (game->suite_turn == -1) {
+                // you are the first turn (mano)
+                bool is_three_present = false;
+                if(any_of(game->selected_cards_index.begin(), game->selected_cards_index.end(), [](int i){return i==0;})) {
+                    is_three_present = true;
+                }
+                if (is_three_present) {
+                    your_control_turn(is_valid_turn);
+                }
+            } else {
+                cout << "NOT MANO\n";
+                if (game->last_turn == 0) {
+                    your_control_turn(is_valid_turn);
+                } else {
+                    if (game->suite_turn == TURN_ROYAL_FLUSH || game->suite_turn == TURN_QUADRA || game->suite_turn == TURN_FULL_HOUSE || game->suite_turn == TURN_FLUSH || game->suite_turn == TURN_STRAIGHT) {
+                        int temp_suite_turn = -1;
+                        if (game->selected_cards_index.size() == 5) {
+                            bool is_reverse = false;
+
+                            sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+                                return sort_straight(n1, n2);
+                            });
+
+                            if(get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[0]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name) && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[1]].suit
+                            && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name) && game->cards[game->selected_cards_index[1]].suit == game->cards[game->selected_cards_index[2]].suit
+                            && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name) && game->cards[game->selected_cards_index[2]].suit == game->cards[game->selected_cards_index[3]].suit
+                            && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[4]].name) && game->cards[game->selected_cards_index[3]].suit == game->cards[game->selected_cards_index[4]].suit) {
+                                //royal flush
+                                temp_suite_turn = TURN_ROYAL_FLUSH;
+                            }
+
+                            //back to normal sorting
+                            sort(game->selected_cards_index.begin(), game->selected_cards_index.end());
+
+                            if(game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+                            && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name
+                            && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[3]].name) {
+                                //check quadra not reverse
+                                temp_suite_turn = TURN_QUADRA;
+                            }
+
+                            //reverse sorting
+                            sort(game->selected_cards_index.rbegin(), game->selected_cards_index.rend());
+
+                            if(game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+                            && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name
+                            && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[3]].name) {
+                                //check quadra for reverse
+                                is_reverse = true;
+                                temp_suite_turn = TURN_QUADRA;
+                            }
+
+                            if(game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+                            && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name
+                            && game->cards[game->selected_cards_index[3]].name == game->cards[game->selected_cards_index[4]].name) {
+                                //check fullhouse in reverse
+                                is_reverse = true;
+                                temp_suite_turn = TURN_FULL_HOUSE;
+                            }
+
+                            //back to normal sorting again
+                            sort(game->selected_cards_index.begin(), game->selected_cards_index.end());
+
+                            if(game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+                            && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name
+                            && game->cards[game->selected_cards_index[3]].name == game->cards[game->selected_cards_index[4]].name) {
+                                //check fullhouse not reverse
+                                temp_suite_turn = TURN_FULL_HOUSE;
+                            }
+
+                            //sort cards for flush
+                            sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+                                return sort_flush(n1, n2);
+                            });
+
+                            if (game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[1]].suit
+                            && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[2]].suit
+                            && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[3]].suit
+                            && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[4]].suit) {
+                                //flushes
+                                if (temp_suite_turn != TURN_ROYAL_FLUSH)
+                                    temp_suite_turn = TURN_FLUSH;
+                            }
+
+                            //sort the card for straight
+                            sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+                                return sort_straight(n1, n2);
+                            });
+
+                            if(get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[0]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name)
+                            && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name)
+                            && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name)
+                            && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[4]].name)) {
+                                //straight
+                                if (temp_suite_turn != TURN_ROYAL_FLUSH)
+                                    temp_suite_turn = TURN_STRAIGHT;
+                            }
+
+                            //back to normal sorting again
+                            sort(game->selected_cards_index.begin(), game->selected_cards_index.end());
+
+                            if (game->suite_turn != -1) {
+                                if (is_reverse)
+                                    sort(game->selected_cards_index.rbegin(), game->selected_cards_index.rend());
+
+                                if (game->suite_turn == TURN_STRAIGHT || game->suite_turn == TURN_ROYAL_FLUSH)
+                                    //straight or royal flush
+                                    sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+                                        return sort_straight(n1, n2);
+                                    });
+
+                                if (game->suite_turn == TURN_FLUSH)
+                                    sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+                                        return sort_flush(n1, n2);
+                                    });
+
+                                if (temp_suite_turn > game->suite_turn) {
+                                    game->suite_turn = temp_suite_turn;
+                                    is_valid_turn = true;
+                                } else if (temp_suite_turn == game->suite_turn) {
+                                    //need validation here
+                                    if (temp_suite_turn == TURN_ROYAL_FLUSH) {
+                                        if (get_string_index(CARD_SUITES, game->cards[game->selected_cards_index[4]].suit) >= get_string_index(CARD_SUITES, game->cards[game->placed_cards_index[4]].suit)) {
+                                            if (get_string_index(CARD_SUITES, game->cards[game->selected_cards_index[4]].suit) > get_string_index(CARD_SUITES, game->cards[game->placed_cards_index[4]].suit)) {
+                                                is_valid_turn = true;
+                                            } else {
+                                                //suit is equal
+                                                if (get_card_index(game->cards_straight, game->selected_cards_index[4]) > get_card_index(game->cards_straight, game->placed_cards_index[4])) {
+                                                    is_valid_turn = true;
+                                                }
+                                            }
+                                        }
+                                    } else if (temp_suite_turn == TURN_QUADRA || temp_suite_turn == TURN_FULL_HOUSE) {
+                                        if (game->selected_cards_index[0] > game->placed_cards_index[0]) {
+                                            is_valid_turn = true;
+                                        }
+                                    } else if (temp_suite_turn == TURN_FLUSH) {
+                                        if (get_string_index(CARD_SUITES, game->cards[game->selected_cards_index[4]].suit) >= get_string_index(CARD_SUITES, game->cards[game->placed_cards_index[4]].suit)) {
+                                            if (get_string_index(CARD_SUITES, game->cards[game->selected_cards_index[4]].suit) > get_string_index(CARD_SUITES, game->cards[game->placed_cards_index[4]].suit)) {
+                                                is_valid_turn = true;
+                                            } else {
+                                                //suit is equal
+                                                if (get_card_index(game->cards_flush, game->selected_cards_index[4]) > get_card_index(game->cards_flush, game->placed_cards_index[4])) {
+                                                    is_valid_turn = true;
+                                                }
+                                            }
+                                        }
+                                    } else if (temp_suite_turn == TURN_STRAIGHT) {
+                                        if (get_card_index(game->cards_straight, game->selected_cards_index[4]) > get_card_index(game->cards_straight, game->placed_cards_index[4])) {
+                                            is_valid_turn = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    } else if (game->suite_turn == TURN_TRIO) {
+                        if (game->selected_cards_index.size() == 3) {
+                            if (game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+                            && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name
+                            && game->selected_cards_index[0] > game->placed_cards_index[2]) {
+                                is_valid_turn = true;
+                            }
+                        }
+                    } else if (game->suite_turn == TURN_PAR) {
+                        if (game->selected_cards_index.size() == 2) {
+                            if (game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+                            && game->selected_cards_index[1] > game->placed_cards_index[1]) {
+                                is_valid_turn = true;
+                            }
+                        }
+                    } else {
+                        //single
+                        if (game->selected_cards_index.size() == 1) {
+                            if (game->selected_cards_index[0] > game->placed_cards_index[0]) {
+                                is_valid_turn = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (is_valid_turn) {
+                //remove player cards visibility
+                for (int x=0; x < game->player_cards[0].size(); x++) {
+                    if (game->cards[game->player_cards[0][x]].show) {
+                        int val = game->player_cards[0][x];
+                        //if visible, check if existing in selected cards
+                        //if existing then set show to false (hide the card and disable clicking event)
+                        if(any_of(game->selected_cards_index.begin(), game->selected_cards_index.end(), [&val](int i){return i==val;})) {
+                            game->cards[game->player_cards[0][x]].show = false;
+                        }
+                    }
+                }
+
+                game->placed_cards_index.clear();
+                int draw_width;
+
+                if (game->selected_cards_index.size() > 1) {
+                    draw_width = CARD_PEEK_WIDTH * (game->selected_cards_index.size() - 1) + CARD_WIDTH;
+                } else {
+                    draw_width = CARD_WIDTH;
+                }
+
+                int current_x = (GAME_WIDTH / 2) - (draw_width / 2);
+                int current_y = (GAME_HEIGHT / 2) - (CARD_HEIGHT / 2);
+
+                for (int x=0; x<game->selected_cards_index.size(); x++) {
+
+                    GameCard this_card = game->cards[game->selected_cards_index[x]];
+                    int sprite_index = game->sprite_mappings[this_card.name + this_card.suit];
+                    game->sprites[sprite_index]->set_position(sf::Vector2f(current_x, current_y));
+
+                    game->placed_cards_index.push_back(game->selected_cards_index[x]);
+                    current_x += CARD_PEEK_WIDTH;
+                }
+
+                //TODO: THINK HOW TO REMOVE cards from game->player_cards[0] and for other players
+
+                game->selected_cards_index.clear();
+                game->last_turn = 0;
+                game->play_state = PLAY_STATE_SHOW_WHOS_TURN;
+                check_whos_turn();
+
+                if (game->player_cards[0].size() == 0) { //TODO: TO MAKE THIS ACCURATE, NEED TO DO THE TODO ABOVE
+                    int active_count = 0;
+
+                    for (int x=0; x<3; x++) {
+                        if (game->player_cards[x+1].size() > 0)
+                            active_count += 1;
+                    }
+
+                    if (active_count > 1)
+                        start_timer();
+                } else {
+                    start_timer();
+                }
+
+                game->sounds[3]->play(); //card place sound
+            } else {
+                game->sounds[2]->play();
+            }
+
         } else {
             game->sounds[2]->play();
         }
@@ -251,6 +498,15 @@ void PlayRoom::click() {
         //pass button
         if (game->play_state == PLAY_STATE_CARD_PLACE && game->whos_turn == 0) {
             //can pass
+            if (game->suite_turn == -1 || (game->whos_turn == 0 && game->last_turn == 0)) {
+                //you cannot pass if you got the 3 clubs or you're the control
+                game->sounds[2]->play();
+            } else {
+                game->sounds[0]->play();
+                game->play_state = PLAY_STATE_SHOW_WHOS_TURN;
+                check_whos_turn();
+                start_timer();
+            }
         } else {
             game->sounds[2]->play();
         }
@@ -337,6 +593,15 @@ void PlayRoom::draw() {
         }
     }
 
+    //draw placed card
+    if (game->placed_cards_index.size() > 0) {
+        for (int x=0; x<game->placed_cards_index.size(); x++) {
+            GameCard this_card = game->cards[game->placed_cards_index[x]];
+            int sprite_index = game->sprite_mappings[this_card.name + this_card.suit];
+            game->window->draw(game->sprites[sprite_index]->get_sprite());
+        }
+    }
+
     //draw status text
     if (game->show_status) {
         game->text_status.setPosition((GAME_WIDTH / 2) - (game->text_status.getLocalBounds().width / 2), (GAME_HEIGHT / 2) - (game->text_name.getLocalBounds().height / 2));
@@ -362,8 +627,7 @@ void PlayRoom::process_state() {
         game->play_state = PLAY_STATE_CARD_PLACE;
         game->show_status = true; //to show the status in draw function
         game->sounds[2]->play();
-    } else {
-        //PLAY_STATE_CARD_PLACE
+    } else if(game->play_state == PLAY_STATE_CARD_PLACE) {
         //place AI card on the board
         game->show_status = false; //hide status
         if (game->whos_turn == 0) {
@@ -399,6 +663,21 @@ int PlayRoom::get_card_index(vector<GameCard> cards_to_check, int card_index){
     return ret;
 }
 
+int PlayRoom::get_card_index_by_gamecard(GameCard gc) {
+    int ret = -1;
+
+    vector<GameCard>::iterator it = find_if(game->cards.begin(), game->cards.end(), [&gc](const GameCard &val){
+        if (val.name == gc.name && val.suit == gc.suit)
+            return true;
+		return false;
+	});
+
+    if (it != game->cards.end())
+        ret = distance(game->cards.begin(), it);
+
+    return ret;
+}
+
 int PlayRoom::get_string_index(vector<string> vector_to_check, string value) {
     int ret = -1;
     vector<string>::iterator it = find_if(vector_to_check.begin(), vector_to_check.end(), [&value](const string &val){
@@ -410,4 +689,178 @@ int PlayRoom::get_string_index(vector<string> vector_to_check, string value) {
     if (it != vector_to_check.end())
         ret = distance(vector_to_check.begin(), it);
     return ret;
+}
+
+void PlayRoom::check_whos_turn() {
+    int done_count = 0;
+    bool got_next = false;
+    string who_lose = "";
+
+    for(int x=0;x < game->player_cards.size(); x++) {
+        if (game->player_cards[x].size() == 0)
+            done_count += 1;
+    }
+
+    if (done_count == 3) {
+        //display who lose the game
+        for(int x=0;x < game->player_cards.size(); x++) {
+            if (game->player_cards[x].size() > 0) {
+                
+                if (x == 0)
+                    game->text_status.setString("You lose! Press the reset button...");
+                else
+                    game->text_status.setString(AI_PLAYER_NAMES_LIST[game->player_names[x-1]] + " lose! Press the reset button...");
+                break;
+            }
+        }
+        game->show_status = true; //to show the status in draw function
+        game->sounds[2]->play();
+        game->play_state = PLAY_STATE_NONE; //to make sure timer doesn't work even though it's started
+        stop_timer();
+    } else {
+        //determine whos next to have their turn
+        while (!got_next) {
+            if (game->whos_turn < 3) {
+                game->whos_turn += 1;
+            } else {
+                game->whos_turn = 0;
+            }
+
+            if (game->player_cards[game->whos_turn].size() > 0)
+                got_next = true;
+        }
+
+        if (game->player_cards[game->last_turn].size() == 0)
+            game->last_turn = game->whos_turn;
+    }
+
+}
+
+bool PlayRoom::sort_straight(int n1, int n2) {
+    return (get_card_index(game->cards_straight, n1) < get_card_index(game->cards_straight, n2));   
+}
+
+bool PlayRoom::sort_flush(int n1, int n2) {
+    return (get_card_index(game->cards_flush, n1) < get_card_index(game->cards_flush, n2));   
+}
+
+void PlayRoom::your_control_turn(bool &is_valid_turn) {
+    if (game->selected_cards_index.size() == 5) {
+        bool is_reverse = false;
+        sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+            return sort_straight(n1, n2);
+        });
+
+        if(get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[0]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name) && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[1]].suit
+        && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name) && game->cards[game->selected_cards_index[1]].suit == game->cards[game->selected_cards_index[2]].suit
+        && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name) && game->cards[game->selected_cards_index[2]].suit == game->cards[game->selected_cards_index[3]].suit
+        && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[4]].name) && game->cards[game->selected_cards_index[3]].suit == game->cards[game->selected_cards_index[4]].suit) {
+            //royal flush
+            game->suite_turn = TURN_ROYAL_FLUSH;
+        }
+
+        //back to normal sorting
+        sort(game->selected_cards_index.begin(), game->selected_cards_index.end());
+
+        if(game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+        && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name
+        && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[3]].name) {
+            //check quadra not reverse
+            game->suite_turn = TURN_QUADRA;
+        }
+
+        //reverse sorting
+        sort(game->selected_cards_index.rbegin(), game->selected_cards_index.rend());
+
+        if(game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+        && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name
+        && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[3]].name) {
+            //check quadra for reverse
+            is_reverse = true;
+            game->suite_turn = TURN_QUADRA;
+        }
+
+        if(game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+        && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name
+        && game->cards[game->selected_cards_index[3]].name == game->cards[game->selected_cards_index[4]].name) {
+            //check fullhouse in reverse
+            is_reverse = true;
+            game->suite_turn = TURN_FULL_HOUSE;
+        }
+
+        //back to normal sorting again
+        sort(game->selected_cards_index.begin(), game->selected_cards_index.end());
+
+        if(game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+        && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name
+        && game->cards[game->selected_cards_index[3]].name == game->cards[game->selected_cards_index[4]].name) {
+            //check fullhouse not reverse
+            game->suite_turn = TURN_FULL_HOUSE;
+        }
+
+        //sort cards for flush
+        sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+            return sort_flush(n1, n2);
+        });
+
+        if (game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[1]].suit
+        && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[2]].suit
+        && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[3]].suit
+        && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[4]].suit) {
+            //flushes
+            game->suite_turn = TURN_FLUSH;
+        }
+
+        //sort the card for straight
+        sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+            return sort_straight(n1, n2);
+        });
+
+        if(get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[0]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name)
+        && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name)
+        && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name)
+        && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[4]].name)) {
+            //straight
+            game->suite_turn = TURN_STRAIGHT;
+        }
+
+        //back to normal sorting again
+        sort(game->selected_cards_index.begin(), game->selected_cards_index.end());
+
+        if (game->suite_turn != -1) {
+            if (is_reverse)
+                sort(game->selected_cards_index.rbegin(), game->selected_cards_index.rend());
+
+            if (game->suite_turn == TURN_STRAIGHT || game->suite_turn == TURN_ROYAL_FLUSH)
+                //straight or royal flush
+                sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+                    return sort_straight(n1, n2);
+                });
+
+            if (game->suite_turn == TURN_FLUSH)
+                sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
+                    return sort_flush(n1, n2);
+                });
+
+            is_valid_turn = true;
+        }
+
+    } else if (game->selected_cards_index.size() == 3) {
+        //trio
+        if (game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name
+        && game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[2]].name) {
+            is_valid_turn = true;
+            game->suite_turn = TURN_TRIO;
+        }
+    } else if (game->selected_cards_index.size() == 2) {
+        //par
+        if (game->cards[game->selected_cards_index[0]].name == game->cards[game->selected_cards_index[1]].name) {
+            is_valid_turn = true;
+            game->suite_turn = TURN_PAR;
+        }
+    } else if (game->selected_cards_index.size() == 1) {
+        //no checking needed, it's a single turn
+        is_valid_turn = true;
+        game->suite_turn = TURN_SINGLE;
+    }
 }

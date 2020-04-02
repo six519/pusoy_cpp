@@ -640,16 +640,6 @@ void PlayRoom::process_state() {
             //AI's turn
             if (game->suite_turn == -1) {
                 //first turn
-                vector<int> temp_cards_flush;
-
-                for (int x=0;x<game->player_cards[game->whos_turn].size();x++) {
-                    temp_cards_flush.push_back(game->player_cards[game->whos_turn][x]);
-                }
-
-                sort(temp_cards_flush.begin(), temp_cards_flush.end(), [this](int n1, int n2){
-                    return sort_flush(n1, n2);
-                });
-
                 for(int x=7; x>-1;x--) {
                     vector<int> temp_cards;
                     vector<int> final_cards;
@@ -733,11 +723,16 @@ void PlayRoom::process_state() {
                                 game->suite_turn = TURN_FULL_HOUSE;
                         break;
                         case TURN_FLUSH:
+
+                            sort(temp_cards.begin(), temp_cards.end(), [this](int n1, int n2){
+                                return sort_flush(n1, n2);
+                            });
+
                             for (int x2=0; x2<5;x2++) {
-                                for (int x3=0;x3<temp_cards_flush.size();x3++) {
-                                    if (game->cards[temp_cards_flush[x3]].suit == CARD_SUITES[0]) {
-                                        final_cards.push_back(temp_cards_flush[x3]);
-                                        temp_cards_flush.erase(remove(temp_cards_flush.begin(), temp_cards_flush.end(), temp_cards_flush[x3]), temp_cards_flush.end());
+                                for (int x3=0;x3<temp_cards.size();x3++) {
+                                    if (game->cards[temp_cards[x3]].suit == CARD_SUITES[0]) {
+                                        final_cards.push_back(temp_cards[x3]);
+                                        temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
                                         break;
                                     }
                                 }

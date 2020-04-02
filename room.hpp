@@ -45,6 +45,7 @@ class PlayRoom: public Room {
         bool sort_flush(int n1, int n2);
         int get_card_index_by_gamecard(GameCard gc);
         void your_control_turn(bool &is_valid_turn);
+        void enemy_control_turn();
 };
 
 #endif

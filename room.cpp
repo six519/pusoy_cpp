@@ -638,6 +638,199 @@ void PlayRoom::process_state() {
             stop_timer();
         } else { 
             //AI's turn
+            if (game->suite_turn == -1) {
+                //first turn
+                vector<int> temp_cards_flush;
+
+                for (int x=0;x<game->player_cards[game->whos_turn].size();x++) {
+                    temp_cards_flush.push_back(game->player_cards[game->whos_turn][x]);
+                }
+
+                sort(temp_cards_flush.begin(), temp_cards_flush.end(), [this](int n1, int n2){
+                    return sort_flush(n1, n2);
+                });
+
+                for(int x=7; x>-1;x--) {
+                    vector<int> temp_cards;
+                    vector<int> final_cards;
+
+                    for (int x2=0; x2<game->player_cards[game->whos_turn].size(); x2++) {
+                        temp_cards.push_back(game->player_cards[game->whos_turn][x2]);
+                    }
+
+                    switch (x) {
+                        case TURN_ROYAL_FLUSH:
+                            for (int x2=0; x2<5;x2++) {
+                                for (int x3=0;x3<temp_cards.size();x3++) {
+                                    if (game->cards[temp_cards[x3]].name == CARD_PIPS[x2]
+                                    && game->cards[temp_cards[x3]].suit == CARD_SUITES[0]) {
+                                        final_cards.push_back(temp_cards[x3]);
+                                        temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (final_cards.size() == 5)
+                                game->suite_turn = TURN_ROYAL_FLUSH;
+                        break;
+                        case TURN_QUADRA:
+                            for (int x2=0; x2<5;x2++) {
+                                for (int x3=0;x3<temp_cards.size();x3++) {
+                                    if (x2 == 4) {
+                                        //last card
+                                        final_cards.push_back(temp_cards[x3]);
+                                        temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
+                                        break;
+                                    } else {
+                                        if (game->cards[temp_cards[x3]].name == CARD_PIPS[0]) {
+                                            final_cards.push_back(temp_cards[x3]);
+                                            temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (final_cards.size() == 5)
+                                game->suite_turn = TURN_QUADRA;
+                        break;
+                        case TURN_FULL_HOUSE:
+                            //get 3 cards first
+                            for (int x2=0; x2<3;x2++) {
+                                for (int x3=0;x3<temp_cards.size();x3++) {
+                                    if (game->cards[temp_cards[x3]].name == CARD_PIPS[0]) {
+                                        final_cards.push_back(temp_cards[x3]);
+                                        temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
+                                        break;
+                                    }   
+                                }
+                            }
+
+                            if (final_cards.size() == 3) {
+                                int final_cards_temp;
+                                bool need_break = false;
+
+                                while(temp_cards.size() > 0) {
+                                    final_cards_temp = temp_cards[0];
+                                    temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[0]), temp_cards.end());
+
+                                    for (int x2=0;x2<temp_cards.size();x2++) {
+                                        if (game->cards[final_cards_temp].name == game->cards[temp_cards[x2]].name) {
+                                            need_break = true;
+                                            final_cards.push_back(final_cards_temp);
+                                            final_cards.push_back(temp_cards[x2]);
+                                            break;
+                                        }
+                                    }
+
+                                    if (need_break)
+                                        break;
+                                }
+
+                            }
+                            if (final_cards.size() == 5)
+                                game->suite_turn = TURN_FULL_HOUSE;
+                        break;
+                        case TURN_FLUSH:
+                            for (int x2=0; x2<5;x2++) {
+                                for (int x3=0;x3<temp_cards_flush.size();x3++) {
+                                    if (game->cards[temp_cards_flush[x3]].suit == CARD_SUITES[0]) {
+                                        final_cards.push_back(temp_cards_flush[x3]);
+                                        temp_cards_flush.erase(remove(temp_cards_flush.begin(), temp_cards_flush.end(), temp_cards_flush[x3]), temp_cards_flush.end());
+                                        break;
+                                    }
+                                }
+                            }
+                            if (final_cards.size() == 5)
+                                game->suite_turn = TURN_FLUSH;
+                        break;
+                        case TURN_STRAIGHT:
+                            for (int x2=0; x2<5;x2++) {
+                                for (int x3=0;x3<temp_cards.size();x3++) {
+                                    if (game->cards[temp_cards[x3]].name == CARD_PIPS[x2]) {
+                                        final_cards.push_back(temp_cards[x3]);
+                                        temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
+                                        break;
+                                    }
+                                }
+                            }
+                            if (final_cards.size() == 5)
+                                game->suite_turn = TURN_STRAIGHT;
+                        break;
+                        case TURN_TRIO:
+                            for (int x2=0; x2<3;x2++) {
+                                for (int x3=0;x3<temp_cards.size();x3++) {
+                                    if (game->cards[temp_cards[x3]].name == CARD_PIPS[0]) {
+                                        final_cards.push_back(temp_cards[x3]);
+                                        temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
+                                        break;
+                                    }
+                                }
+                            }
+                            if (final_cards.size() == 3)
+                                game->suite_turn = TURN_TRIO;
+                        break;
+                        case TURN_PAR:
+                            for (int x2=0; x2<2;x2++) {
+                                for (int x3=0;x3<temp_cards.size();x3++) {
+                                    if (game->cards[temp_cards[x3]].name == CARD_PIPS[0]) {
+                                        final_cards.push_back(temp_cards[x3]);
+                                        temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
+                                        break;
+                                    }
+                                }
+                            }
+                            if (final_cards.size() == 2)
+                                game->suite_turn = TURN_PAR;
+                        break;
+                        default:
+                            final_cards.push_back(temp_cards[0]);
+                            temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[0]), temp_cards.end());
+                            game->suite_turn = TURN_SINGLE;
+                    }
+
+                    if (game->suite_turn > -1) {
+
+                        game->placed_cards_index.clear();
+                        int draw_width;
+
+                        if (final_cards.size() > 1) {
+                            draw_width = CARD_PEEK_WIDTH * (final_cards.size() - 1) + CARD_WIDTH;
+                        } else {
+                            draw_width = CARD_WIDTH;
+                        }
+
+                        int current_x = (GAME_WIDTH / 2) - (draw_width / 2);
+                        int current_y = (GAME_HEIGHT / 2) - (CARD_HEIGHT / 2);
+
+                        for (int x2=0; x2<final_cards.size(); x2++) {
+
+                            GameCard this_card = game->cards[final_cards[x2]];
+                            int sprite_index = game->sprite_mappings[this_card.name + this_card.suit];
+                            game->sprites[sprite_index]->set_position(sf::Vector2f(current_x, current_y));
+
+                            game->placed_cards_index.push_back(final_cards[x2]);
+                            current_x += CARD_PEEK_WIDTH;
+                        }
+
+                        //remove cards
+                        for (int x2=0; x2<final_cards.size(); x2++) {
+                            game->player_cards[game->whos_turn].erase(remove(game->player_cards[game->whos_turn].begin(), game->player_cards[game->whos_turn].end(), final_cards[x2]), game->player_cards[game->whos_turn].end());
+                        }
+
+                        break;
+                    }
+                }
+
+                game->last_turn = game->whos_turn;
+                game->play_state = PLAY_STATE_SHOW_WHOS_TURN;
+                check_whos_turn();
+                game->sounds[3]->play();
+
+            } else {
+
+            }
         }
     }
 }

@@ -92,17 +92,6 @@ const vector<string> CARD_PIPS_FLUSH = {
     "king"
 };
 
-const vector<string> CARD_MODES = {
-    "single",
-    "par",
-    "trio",
-    "straight",
-    "flush",
-    "fullhouse",
-    "quadra",
-    "royal_flush"
-};
-
 const vector<string> AI_PLAYER_NAMES_LIST = {
     "Uriel",
     "Patrick",

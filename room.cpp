@@ -976,7 +976,6 @@ void PlayRoom::process_state() {
                     check_whos_turn();
 
                 } else {
-                    cout << "I GUESS THIS WILL EXECUTE BUG" << endl;
                     enemy_control_turn();
                 }
             }
@@ -1363,8 +1362,6 @@ void PlayRoom::enemy_control_turn() {
             break;
         }
     }
-
-    cout << "THE SUIT IS:" << game->suite_turn << endl;
 
     game->last_turn = game->whos_turn;
     game->play_state = PLAY_STATE_SHOW_WHOS_TURN;

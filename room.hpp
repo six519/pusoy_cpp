@@ -46,6 +46,7 @@ class PlayRoom: public Room {
         int get_card_index_by_gamecard(GameCard gc);
         void your_control_turn(bool &is_valid_turn);
         void enemy_control_turn();
+        void place_enemy_card(vector<int> &final_cards);
 };
 
 #endif

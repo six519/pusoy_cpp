@@ -49,6 +49,9 @@ void MainRoom::init() {
     //set title y to out of screen
     game->title_y = 0 - game->sprites[1]->get_sprite().getLocalBounds().height;
     game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, game->title_y));
+
+    game->title_y2 = GAME_HEIGHT + game->sprites[9]->get_sprite().getLocalBounds().height;
+    game->sprites[9]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[9]->get_sprite().getLocalBounds().width) / 2, game->title_y2));
 }
 
 void MainRoom::click() {
@@ -66,11 +69,18 @@ void MainRoom::draw() {
     float center_y = (GAME_HEIGHT - game->sprites[1]->get_sprite().getLocalBounds().height) / 2;
 
     if (game->title_y < center_y) {
-        //sliding in title
+        //sliding in title from up
         game->title_y += 0.1;
         game->sprites[1]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[1]->get_sprite().getLocalBounds().width) / 2, game->title_y));
     }
+
+    if (game->title_y2 > center_y) {
+        //sliding in title from down
+        game->title_y2 -= 0.1;
+        game->sprites[9]->set_position(sf::Vector2f((GAME_WIDTH - game->sprites[9]->get_sprite().getLocalBounds().width) / 2, game->title_y2));
+    }
         
+    game->window->draw(game->sprites[9]->get_sprite());
     game->window->draw(game->sprites[1]->get_sprite());
 }
 

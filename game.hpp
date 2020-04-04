@@ -135,6 +135,7 @@ class Game {
         sf::Text text_name;
         sf::Text text_status;
         float title_y;
+        float title_y2;
         vector<int> selected_cards_index;
         vector<int> placed_cards_index;
         int whos_turn;

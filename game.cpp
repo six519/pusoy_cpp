@@ -14,7 +14,7 @@ void Game::init() {
     state = GAME_STATE_MAIN;
     is_music_on = true;
 
-    add_sprite("sprites/p2.jpg", true);
+    add_sprite("sprites/p2.png", true);
     add_sprite("sprites/title.png");
     add_sprite("sprites/button_sound_on.png");
     add_sprite("sprites/button_sound_off.png");
@@ -23,6 +23,7 @@ void Game::init() {
     add_sprite("sprites/button_pass.png");
     add_sprite("sprites/cards/card_back.png");
     add_sprite("sprites/button_backward.png");
+    add_sprite("sprites/title2.png");
 
     //load card sprites and map it
     load_cards(CARD_PIPS, cards, true);

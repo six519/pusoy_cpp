@@ -1222,9 +1222,17 @@ void PlayRoom::your_control_turn(bool &is_valid_turn) {
 void PlayRoom::enemy_control_turn() {
     //make game->suite_turn is -1 or force that no turn yet
     game->suite_turn = -1;
+    vector<int> available_moves;
+    vector<int> final_cards_royal_flush;
+    vector<int> final_cards_quadra;
+    vector<int> final_cards_full_house;
+    vector<int> final_cards_flush;
+    vector<int> final_cards_straight;
+    vector<int> final_cards_trio;
+    vector<int> final_cards_par;
+    vector<int> final_cards_single;
     for(int x=7; x>-1;x--) {
         vector<int> temp_cards;
-        vector<int> final_cards;
 
         for (int x2=0; x2<game->player_cards[game->whos_turn].size(); x2++) {
             temp_cards.push_back(game->player_cards[game->whos_turn][x2]);
@@ -1236,27 +1244,27 @@ void PlayRoom::enemy_control_turn() {
                     for (int x3=0;x3<temp_cards.size();x3++) {
                         if (game->cards[temp_cards[x3]].name == CARD_PIPS[x2]
                         && game->cards[temp_cards[x3]].suit == CARD_SUITES[0]) {
-                            final_cards.push_back(temp_cards[x3]);
+                            final_cards_royal_flush.push_back(temp_cards[x3]);
                             temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
                             break;
                         }
                     }
                 }
 
-                if (final_cards.size() == 5)
-                    game->suite_turn = TURN_ROYAL_FLUSH;
+                if (final_cards_royal_flush.size() == 5)
+                    available_moves.push_back(TURN_ROYAL_FLUSH);
             break;
             case TURN_QUADRA:
                 for (int x2=0; x2<5;x2++) {
                     for (int x3=0;x3<temp_cards.size();x3++) {
                         if (x2 == 4) {
                             //last card
-                            final_cards.push_back(temp_cards[x3]);
+                            final_cards_quadra.push_back(temp_cards[x3]);
                             temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
                             break;
                         } else {
                             if (game->cards[temp_cards[x3]].name == CARD_PIPS[0]) {
-                                final_cards.push_back(temp_cards[x3]);
+                                final_cards_quadra.push_back(temp_cards[x3]);
                                 temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
                                 break;
                             }
@@ -1264,22 +1272,22 @@ void PlayRoom::enemy_control_turn() {
                     }
                 }
 
-                if (final_cards.size() == 5)
-                    game->suite_turn = TURN_QUADRA;
+                if (final_cards_quadra.size() == 5)
+                    available_moves.push_back(TURN_QUADRA);
             break;
             case TURN_FULL_HOUSE:
                 //get 3 cards first
                 for (int x2=0; x2<3;x2++) {
                     for (int x3=0;x3<temp_cards.size();x3++) {
                         if (game->cards[temp_cards[x3]].name == CARD_PIPS[0]) {
-                            final_cards.push_back(temp_cards[x3]);
+                            final_cards_full_house.push_back(temp_cards[x3]);
                             temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
                             break;
                         }   
                     }
                 }
 
-                if (final_cards.size() == 3) {
+                if (final_cards_full_house.size() == 3) {
                     int final_cards_temp;
                     bool need_break = false;
 
@@ -1290,8 +1298,8 @@ void PlayRoom::enemy_control_turn() {
                         for (int x2=0;x2<temp_cards.size();x2++) {
                             if (game->cards[final_cards_temp].name == game->cards[temp_cards[x2]].name) {
                                 need_break = true;
-                                final_cards.push_back(final_cards_temp);
-                                final_cards.push_back(temp_cards[x2]);
+                                final_cards_full_house.push_back(final_cards_temp);
+                                final_cards_full_house.push_back(temp_cards[x2]);
                                 break;
                             }
                         }
@@ -1301,8 +1309,8 @@ void PlayRoom::enemy_control_turn() {
                     }
 
                 }
-                if (final_cards.size() == 5)
-                    game->suite_turn = TURN_FULL_HOUSE;
+                if (final_cards_full_house.size() == 5)
+                    available_moves.push_back(TURN_FULL_HOUSE);
             break;
             case TURN_FLUSH:
 
@@ -1313,63 +1321,90 @@ void PlayRoom::enemy_control_turn() {
                 for (int x2=0; x2<5;x2++) {
                     for (int x3=0;x3<temp_cards.size();x3++) {
                         if (game->cards[temp_cards[x3]].suit == CARD_SUITES[0]) {
-                            final_cards.push_back(temp_cards[x3]);
+                            final_cards_flush.push_back(temp_cards[x3]);
                             temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
                             break;
                         }
                     }
                 }
-                if (final_cards.size() == 5)
-                    game->suite_turn = TURN_FLUSH;
+                if (final_cards_flush.size() == 5)
+                    available_moves.push_back(TURN_FLUSH);
             break;
             case TURN_STRAIGHT:
                 for (int x2=0; x2<5;x2++) {
                     for (int x3=0;x3<temp_cards.size();x3++) {
                         if (game->cards[temp_cards[x3]].name == CARD_PIPS[x2]) {
-                            final_cards.push_back(temp_cards[x3]);
+                            final_cards_straight.push_back(temp_cards[x3]);
                             temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
                             break;
                         }
                     }
                 }
-                if (final_cards.size() == 5)
-                    game->suite_turn = TURN_STRAIGHT;
+                if (final_cards_straight.size() == 5)
+                    available_moves.push_back(TURN_STRAIGHT);
             break;
             case TURN_TRIO:
                 for (int x2=0; x2<3;x2++) {
                     for (int x3=0;x3<temp_cards.size();x3++) {
                         if (game->cards[temp_cards[x3]].name == CARD_PIPS[0]) {
-                            final_cards.push_back(temp_cards[x3]);
+                            final_cards_trio.push_back(temp_cards[x3]);
                             temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
                             break;
                         }
                     }
                 }
-                if (final_cards.size() == 3)
-                    game->suite_turn = TURN_TRIO;
+                if (final_cards_trio.size() == 3)
+                    available_moves.push_back(TURN_TRIO);
             break;
             case TURN_PAR:
                 for (int x2=0; x2<2;x2++) {
                     for (int x3=0;x3<temp_cards.size();x3++) {
                         if (game->cards[temp_cards[x3]].name == CARD_PIPS[0]) {
-                            final_cards.push_back(temp_cards[x3]);
+                            final_cards_par.push_back(temp_cards[x3]);
                             temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[x3]), temp_cards.end());
                             break;
                         }
                     }
                 }
-                if (final_cards.size() == 2)
-                    game->suite_turn = TURN_PAR;
+                if (final_cards_par.size() == 2)
+                    available_moves.push_back(TURN_PAR);
             break;
             default:
-                final_cards.push_back(temp_cards[0]);
+                final_cards_single.push_back(temp_cards[0]);
                 temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[0]), temp_cards.end());
-                game->suite_turn = TURN_SINGLE;
+                available_moves.push_back(TURN_SINGLE);
         }
+    }
 
-        if (game->suite_turn > -1) {
-            place_enemy_card(final_cards);
+    if (available_moves.size() > 0) {
+        //select random move
+        int x = rand() % (available_moves.size() - 0) +  0;
+        game->suite_turn = available_moves[x];
+
+        switch (game->suite_turn) {
+            case TURN_ROYAL_FLUSH:
+                place_enemy_card(final_cards_royal_flush);
             break;
+            case TURN_QUADRA:
+                place_enemy_card(final_cards_quadra);
+            break;
+            case TURN_FULL_HOUSE:
+                place_enemy_card(final_cards_full_house);
+            break;
+            case TURN_FLUSH:
+                place_enemy_card(final_cards_flush);
+            break;
+            case TURN_STRAIGHT:
+                place_enemy_card(final_cards_straight);
+            break;
+            case TURN_TRIO:
+                place_enemy_card(final_cards_trio);
+            break;
+            case TURN_PAR:
+                place_enemy_card(final_cards_par);
+            break;
+            default:
+                place_enemy_card(final_cards_single);
         }
     }
 

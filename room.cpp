@@ -975,6 +975,12 @@ void PlayRoom::process_state() {
                                 is_pass = true;
                         break;
                         default:
+                            //check if low or high
+                            if (low_or_high == 1) {
+                                // use highest card
+                                sort(temp_cards.rbegin(), temp_cards.rend());
+                            }
+
                             for (int x=0;x<temp_cards.size();x++) {
                                 if (temp_cards[x] > game->placed_cards_index[0]) {
                                     final_cards.push_back(temp_cards[x]);

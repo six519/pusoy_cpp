@@ -124,6 +124,7 @@ int Game::add_font(string filename) {
 
 vector<int> Game::shuffle_cards() {
     vector<int> index_cards;
+    srand(time(0));
 
     while (index_cards.size() < 52) {
         int x = rand() % (52 - 0) +  0;
@@ -137,6 +138,7 @@ vector<int> Game::shuffle_cards() {
 
 void Game::scramble_names() {
     player_names.clear();
+    srand(time(0));
     while (player_names.size() < 3) {
         int x = rand() % (21 - 0) +  0;
         if(!any_of(player_names.begin(), player_names.end(), [&x](int i){return i==x;})) {

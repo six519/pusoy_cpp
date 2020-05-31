@@ -660,6 +660,7 @@ void PlayRoom::process_state() {
                     int this_pip = -1;
                     bool need_break = false;
                     vector<int> temp_cards2;
+                    srand(time(0));
                     int low_or_high = rand() % (2 - 0) +  0; //for random decision turn, 0 = low, 1 = high, applicable for trio, par and single only
 
                     for (int x=0; x<game->player_cards[game->whos_turn].size(); x++) {
@@ -1435,6 +1436,7 @@ void PlayRoom::enemy_control_turn() {
 
     if (available_moves.size() > 0) {
         //select random move
+        srand(time(0));
         int x = rand() % (available_moves.size() - 0) +  0;
         game->suite_turn = available_moves[x];
 

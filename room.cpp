@@ -660,6 +660,7 @@ void PlayRoom::process_state() {
                     int this_pip = -1;
                     bool need_break = false;
                     vector<int> temp_cards2;
+                    int low_or_high = rand() % (2 - 0) +  0; //for random decision turn, 0 = low, 1 = high, applicable for trio, par and single only
 
                     for (int x=0; x<game->player_cards[game->whos_turn].size(); x++) {
                         temp_cards.push_back(game->player_cards[game->whos_turn][x]);
@@ -911,6 +912,12 @@ void PlayRoom::process_state() {
                             final_cards_temp = -1;
                             need_break = false;
 
+                            //check if low or high
+                            if (low_or_high == 1) {
+                                // high
+                                sort(temp_cards.rbegin(), temp_cards.rend()); //sort reverse if high
+                            }
+
                             while (temp_cards.size() > 0) {
                                 final_cards_temp = temp_cards[0];
                                 temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[0]), temp_cards.end());
@@ -933,6 +940,11 @@ void PlayRoom::process_state() {
                                 } else {
                                     final_cards.clear();
                                 }
+                            }
+
+                            if (low_or_high == 1) {
+                                // if high then sort final cards to normal
+                                sort(final_cards.begin(), final_cards.end());
                             }
 
                             if (final_cards.size() != 3)

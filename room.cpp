@@ -1000,14 +1000,32 @@ void PlayRoom::process_state() {
                             if (low_or_high == 1) {
                                 // use highest card
                                 sort(temp_cards.rbegin(), temp_cards.rend());
-                            }
-
-                            for (int x=0;x<temp_cards.size();x++) {
-                                if (temp_cards[x] > game->placed_cards_index[0]) {
-                                    final_cards.push_back(temp_cards[x]);
-                                    break;
+                                //don't try to select 2 at first
+                                for (int x=0;x<temp_cards.size();x++) {
+                                    if (temp_cards[x] > game->placed_cards_index[0] && game->cards[temp_cards[x]].name != "2") {
+                                        final_cards.push_back(temp_cards[x]);
+                                        break;
+                                    }
+                                }
+                                //if no card selected then accept 2 or any other card
+                                if (final_cards.size() == 0) {
+                                    for (int x=0;x<temp_cards.size();x++) {
+                                        if (temp_cards[x] > game->placed_cards_index[0]) {
+                                            final_cards.push_back(temp_cards[x]);
+                                            break;
+                                        }
+                                    }
+                                }
+                            } else {
+                                // use lowest card
+                                for (int x=0;x<temp_cards.size();x++) {
+                                    if (temp_cards[x] > game->placed_cards_index[0]) {
+                                        final_cards.push_back(temp_cards[x]);
+                                        break;
+                                    }
                                 }
                             }
+
                             if (final_cards.size() != 1)
                                 is_pass = true;
                     }

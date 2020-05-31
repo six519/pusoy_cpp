@@ -954,13 +954,29 @@ void PlayRoom::process_state() {
                             final_cards_temp = -1;
                             need_break = false;
 
+                            //check if low or high
+                            if (low_or_high == 1) {
+                                // high
+                                sort(temp_cards.rbegin(), temp_cards.rend()); //sort reverse if high
+                            }
+
                             while (temp_cards.size() > 0) {
                                 final_cards_temp = temp_cards[0];
                                 temp_cards.erase(remove(temp_cards.begin(), temp_cards.end(), temp_cards[0]), temp_cards.end());
 
                                 for (int x=0;x<temp_cards.size();x++) {
+                                    int index_to_compare = -1;
+
+                                    if (low_or_high == 1) {
+                                        // high
+                                        index_to_compare = final_cards_temp;
+                                    } else {
+                                        // low
+                                        index_to_compare = temp_cards[x];
+                                    }
+
                                     if (game->cards[final_cards_temp].name == game->cards[temp_cards[x]].name
-                                    && temp_cards[x] > game->placed_cards_index[1]) {
+                                    && index_to_compare > game->placed_cards_index[1]) {
                                         need_break = true;
                                         final_cards.push_back(final_cards_temp);
                                         final_cards.push_back(temp_cards[x]);
@@ -969,6 +985,11 @@ void PlayRoom::process_state() {
 
                                 if (need_break)
                                     break;
+                            }
+
+                            if (low_or_high == 1) {
+                                // if high then sort final cards to normal
+                                sort(final_cards.begin(), final_cards.end());
                             }
 
                             if (final_cards.size() != 2)

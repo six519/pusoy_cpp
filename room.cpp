@@ -1289,6 +1289,7 @@ void PlayRoom::enemy_control_turn() {
     vector<int> final_cards_trio;
     vector<int> final_cards_par;
     vector<int> final_cards_single;
+    bool valid_royal = false;
     for(int x=7; x>-1;x--) {
         vector<int> temp_cards;
 
@@ -1309,8 +1310,10 @@ void PlayRoom::enemy_control_turn() {
                     }
                 }
 
-                if (final_cards_royal_flush.size() == 5)
+                if (final_cards_royal_flush.size() == 5) {
                     available_moves.push_back(TURN_ROYAL_FLUSH);
+                    valid_royal = true;
+                }
             break;
             case TURN_QUADRA:
                 for (int x2=0; x2<5;x2++) {
@@ -1385,7 +1388,7 @@ void PlayRoom::enemy_control_turn() {
                         }
                     }
                 }
-                if (final_cards_flush.size() == 5)
+                if (final_cards_flush.size() == 5 && !valid_royal)
                     available_moves.push_back(TURN_FLUSH);
             break;
             case TURN_STRAIGHT:
@@ -1398,7 +1401,7 @@ void PlayRoom::enemy_control_turn() {
                         }
                     }
                 }
-                if (final_cards_straight.size() == 5)
+                if (final_cards_straight.size() == 5 && !valid_royal)
                     available_moves.push_back(TURN_STRAIGHT);
             break;
             case TURN_TRIO:

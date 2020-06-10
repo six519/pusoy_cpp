@@ -1159,6 +1159,7 @@ bool PlayRoom::sort_flush(int n1, int n2) {
 void PlayRoom::your_control_turn(bool &is_valid_turn) {
     if (game->selected_cards_index.size() == 5) {
         bool is_reverse = false;
+        bool valid_royal = false;
         sort(game->selected_cards_index.begin(), game->selected_cards_index.end(), [this](int n1, int n2){
             return sort_straight(n1, n2);
         });
@@ -1169,6 +1170,7 @@ void PlayRoom::your_control_turn(bool &is_valid_turn) {
         && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[4]].name) && game->cards[game->selected_cards_index[3]].suit == game->cards[game->selected_cards_index[4]].suit) {
             //royal flush
             game->suite_turn = TURN_ROYAL_FLUSH;
+            valid_royal = true;
         }
 
         //back to normal sorting
@@ -1218,7 +1220,8 @@ void PlayRoom::your_control_turn(bool &is_valid_turn) {
         if (game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[1]].suit
         && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[2]].suit
         && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[3]].suit
-        && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[4]].suit) {
+        && game->cards[game->selected_cards_index[0]].suit == game->cards[game->selected_cards_index[4]].suit
+        && !valid_royal) {
             //flushes
             game->suite_turn = TURN_FLUSH;
         }
@@ -1231,7 +1234,8 @@ void PlayRoom::your_control_turn(bool &is_valid_turn) {
         if(get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[0]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name)
         && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[1]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name)
         && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[2]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name)
-        && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[4]].name)) {
+        && get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[3]].name) + 1 == get_string_index(CARD_PIPS_STRAIGHT, game->cards[game->selected_cards_index[4]].name)
+        && !valid_royal) {
             //straight
             game->suite_turn = TURN_STRAIGHT;
         }

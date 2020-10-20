@@ -490,8 +490,13 @@ void PlayRoom::click() {
                             active_count += 1;
                     }
 
-                    if (active_count > 1)
+                    if (active_count > 1) {
+                        game->time_out += 4;
+                        game->text_status.setString("You win! Continue or press reset button...");
+                        game->show_status = true;
+                        game->sounds[2]->play();
                         start_timer();
+                    }
                 } else {
                     start_timer();
                 }
@@ -599,7 +604,11 @@ void PlayRoom::draw() {
 
     //handle timer
     if (game->timer_running) {
-        if ((int)game->timer.getElapsedTime().asSeconds() == 1) {
+        if ((int)game->timer.getElapsedTime().asSeconds() == game->time_out) {
+
+            if (game->time_out != game->default_time_out)
+                game->time_out = game->default_time_out;
+
             process_state();
             game->timer.restart();
         }

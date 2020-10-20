@@ -145,6 +145,8 @@ class Game {
         bool show_status;
         sf::Clock timer;
         bool timer_running;
+        int default_time_out = 1;
+        int time_out = 1;
         
         MainRoom* main_room;
         PlayRoom* play_room;
